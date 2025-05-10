@@ -1,4 +1,4 @@
-package com._ID12A.car_rental;
+package com.Gr3ID12A.car_rental;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
