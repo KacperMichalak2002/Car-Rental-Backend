@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -13,28 +14,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "car")
-public class CarEntity {
+@Table(name = "payment")
+public class PaymentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "model_id")
-    private ModelEntity model;
+    @JoinColumn(name = "rental_id")
+    private RentalEntity rental;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "specification_id")
-    private SpecificationEntity specification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_type_id")
+    private PaymentTypeEntity payment_type;
 
     private double cost;
 
-    private double deposit;
+    private Date date_of_payment;
 
-    private String availability;
-
-    private String image_url;
-
-    private String description;
+    private String status;
 }

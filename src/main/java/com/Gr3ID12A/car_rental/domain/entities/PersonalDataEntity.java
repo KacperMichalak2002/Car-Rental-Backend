@@ -13,28 +13,27 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "car")
-public class CarEntity {
+@Table(name = "personal_data")
+public class PersonalDataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "model_id")
-    private ModelEntity model;
+    @JoinColumn(name = "address_id")
+    private AddressEntity address;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "specification_id")
-    private SpecificationEntity specification;
+    private String first_name;
 
-    private double cost;
+    private String last_name;
 
-    private double deposit;
+    private int pesel;
 
-    private String availability;
+    private String id_number;
 
-    private String image_url;
+    private int phone_number;
 
-    private String description;
+    private String email;
+
 }
