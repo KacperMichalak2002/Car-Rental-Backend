@@ -25,7 +25,7 @@ public class CarEntity {
     private ModelEntity model;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "specification_id")
+    @JoinColumn(name = "specification_id", unique = true)
     private SpecificationEntity specification;
 
     private double cost;

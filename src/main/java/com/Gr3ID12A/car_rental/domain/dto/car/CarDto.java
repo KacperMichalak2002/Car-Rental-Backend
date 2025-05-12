@@ -1,5 +1,7 @@
-package com.Gr3ID12A.car_rental.domain.dto;
+package com.Gr3ID12A.car_rental.domain.dto.car;
 
+import com.Gr3ID12A.car_rental.domain.dto.ModelDto;
+import com.Gr3ID12A.car_rental.domain.dto.SpecificationDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
