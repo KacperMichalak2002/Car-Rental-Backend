@@ -1,4 +1,4 @@
-package com.Gr3ID12A.car_rental.domain.dto;
+package com.Gr3ID12A.car_rental.domain.dto.make;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
