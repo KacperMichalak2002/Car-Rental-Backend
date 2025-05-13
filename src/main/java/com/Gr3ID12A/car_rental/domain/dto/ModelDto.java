@@ -1,5 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.dto;
 
+import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
