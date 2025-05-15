@@ -1,11 +1,12 @@
 package com.Gr3ID12A.car_rental.services;
 
-import com.Gr3ID12A.car_rental.domain.entities.PaymentTypeEntity;
+import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
+import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeRequest;
 
 import java.util.List;
 
 public interface PaymentTypeService {
-    List<PaymentTypeEntity> listPaymentType();
+    List<PaymentTypeDto> listPaymentType();
 
-    PaymentTypeEntity createPaymentType(PaymentTypeEntity paymentTypeToCreate);
+    PaymentTypeDto createPaymentType(PaymentTypeRequest paymentTypeRequest);
 }

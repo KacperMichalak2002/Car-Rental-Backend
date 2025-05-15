@@ -1,6 +1,6 @@
-package com.Gr3ID12A.car_rental.domain.dto;
+package com.Gr3ID12A.car_rental.domain.dto.pickUpPlace;
 
-import com.Gr3ID12A.car_rental.domain.entities.AddressEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +12,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PickUpPlaceDto {
-    private UUID id;
+public class PickUpPlaceRequest {
+    @NotNull
     private String name;
-    private AddressEntity address;
+    @NotNull
+    private UUID addressId;
 }

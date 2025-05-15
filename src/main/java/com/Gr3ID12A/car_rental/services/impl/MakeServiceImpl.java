@@ -1,7 +1,9 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
+import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import com.Gr3ID12A.car_rental.domain.entities.MakeEntity;
+import com.Gr3ID12A.car_rental.mappers.MakeMapper;
 import com.Gr3ID12A.car_rental.repositories.MakeRepository;
 import com.Gr3ID12A.car_rental.services.MakeService;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +17,21 @@ import java.util.UUID;
 public class MakeServiceImpl implements MakeService {
 
     private final MakeRepository makeRepository;
+    private final MakeMapper makeMapper;
 
     @Override
-    public List<MakeEntity> listMakes() {
-        return makeRepository.findAll();
+    public List<MakeDto> listMakes() {
+        return makeRepository.findAll()
+                .stream()
+                .map(makeMapper::toDto)
+                .toList();
     }
 
     @Override
-    public MakeEntity createMake(MakeEntity makeToCreate) {
-        return makeRepository.save(makeToCreate);
+    public MakeDto createMake(MakeRequest makeRequest) {
+        MakeEntity makeToCreate = makeMapper.toEntity(makeRequest);
+        MakeEntity savedMake = makeRepository.save(makeToCreate);
+        return makeMapper.toDto(savedMake);
     }
 
     @Override

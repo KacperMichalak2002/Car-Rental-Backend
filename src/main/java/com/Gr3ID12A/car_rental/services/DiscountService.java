@@ -1,16 +1,15 @@
 package com.Gr3ID12A.car_rental.services;
 
-import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
-import jakarta.validation.Valid;
+import com.Gr3ID12A.car_rental.domain.dto.discount.DiscountDto;
+import com.Gr3ID12A.car_rental.domain.dto.discount.DiscountRequest;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface DiscountService {
-    List<DiscountEntity> listDiscounts();
+    List<DiscountDto> listDiscounts();
 
-    DiscountEntity createDiscount(DiscountEntity discountToCreate);
+    DiscountDto createDiscount(DiscountRequest discountRequest);
 
-    Optional<DiscountEntity> getDiscount(UUID id);
+    DiscountDto getDiscount(UUID id);
 }

@@ -2,8 +2,6 @@ package com.Gr3ID12A.car_rental.controllers;
 
 import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
-import com.Gr3ID12A.car_rental.domain.entities.CarEntity;
-import com.Gr3ID12A.car_rental.mappers.CarMapper;
 import com.Gr3ID12A.car_rental.services.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,32 +18,27 @@ import java.util.UUID;
 public class CarController {
 
     private final CarService carService;
-    private final CarMapper carMapper;
 
     @GetMapping
     public ResponseEntity<List<CarDto>> listCars(){
-        List<CarDto> cars = carService.listCars()
-                .stream()
-                .map(carMapper::toDto)
-                .toList();
+        List<CarDto> cars = carService.listCars();
         return ResponseEntity.ok(cars);
     }
 
     @PostMapping
     public ResponseEntity<CarDto> createCar(
             @Valid @RequestBody CarRequest carRequest){
-        CarEntity carToCreate = carMapper.toEntityFromRequest(carRequest);
-        CarEntity savedCar = carService.createCar(carToCreate);
-        return new ResponseEntity<>(
-                carMapper.toDto(savedCar),
-                HttpStatus.CREATED
-        );
+        CarDto savedCar = carService.createCar(carRequest);
+        return new ResponseEntity<>(savedCar, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<CarDto> getCar(@PathVariable("id") UUID id){
-        CarEntity car = carService.getCar(id);
-        CarDto carDto = carMapper.toDto(car);
-        return ResponseEntity.ok(carDto);
+        CarDto carDto = carService.getCar(id);
+        if(carDto == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else {
+            return ResponseEntity.ok(carDto);
+        }
     }
 }

@@ -1,16 +1,14 @@
 package com.Gr3ID12A.car_rental.services;
 
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
-import com.Gr3ID12A.car_rental.domain.entities.MakeEntity;
-import jakarta.validation.Valid;
-
+import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import java.util.List;
 import java.util.UUID;
 
 public interface MakeService {
-    List<MakeEntity> listMakes();
+    List<MakeDto> listMakes();
 
-    MakeEntity createMake(MakeEntity makeToCreate);
+    MakeDto createMake(MakeRequest makeRequest);
 
     void delete(UUID id);
 }

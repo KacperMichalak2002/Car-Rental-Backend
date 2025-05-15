@@ -1,6 +1,9 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
+import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeDto;
+import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeRequest;
 import com.Gr3ID12A.car_rental.domain.entities.BodyTypeEntity;
+import com.Gr3ID12A.car_rental.mappers.BodyTypeMapper;
 import com.Gr3ID12A.car_rental.repositories.BodyTypeRepository;
 import com.Gr3ID12A.car_rental.services.BodyTypeService;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +17,20 @@ import java.util.UUID;
 public class BodyTypeServiceImpl implements BodyTypeService {
 
     private final BodyTypeRepository bodyTypeRepository;
-
+    private final BodyTypeMapper bodyTypeMapper;
     @Override
-    public List<BodyTypeEntity> listBodyTypes() {
-        return bodyTypeRepository.findAll();
+    public List<BodyTypeDto> listBodyTypes() {
+        return bodyTypeRepository.findAll()
+                .stream()
+                .map(bodyTypeMapper::toDto)
+                .toList();
     }
 
     @Override
-    public BodyTypeEntity createBodyType(BodyTypeEntity bodyTypeToCreate) {
-        return bodyTypeRepository.save(bodyTypeToCreate);
+    public BodyTypeDto createBodyType(BodyTypeRequest bodyTypeRequest) {
+        BodyTypeEntity bodyTypeToCreate = bodyTypeMapper.toEntity(bodyTypeRequest);
+        BodyTypeEntity savedBodyType = bodyTypeRepository.save(bodyTypeToCreate);
+        return bodyTypeMapper.toDto(savedBodyType);
     }
 
     @Override

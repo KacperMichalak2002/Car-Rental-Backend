@@ -3,8 +3,6 @@ package com.Gr3ID12A.car_rental.controllers;
 
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
-import com.Gr3ID12A.car_rental.domain.entities.MakeEntity;
-import com.Gr3ID12A.car_rental.mappers.MakeMapper;
 import com.Gr3ID12A.car_rental.services.MakeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,23 +19,18 @@ import java.util.UUID;
 public class MakeController {
 
     private final MakeService makeService;
-    private final MakeMapper makeMapper;
 
     @GetMapping
     public ResponseEntity<List<MakeDto>> listMakes(){
-        List<MakeDto> makes = makeService.listMakes()
-                .stream()
-                .map(makeMapper::toDto)
-                .toList();
+        List<MakeDto> makes = makeService.listMakes();
         return ResponseEntity.ok(makes);
     }
 
     @PostMapping
     public ResponseEntity<MakeDto> createMake(
             @Valid @RequestBody MakeRequest makeRequest){
-        MakeEntity makeToCreate = makeMapper.toEntity(makeRequest);
-        MakeEntity savedMake = makeService.createMake(makeToCreate);
-        return new ResponseEntity<>(makeMapper.toDto(savedMake), HttpStatus.CREATED);
+        MakeDto savedMake = makeService.createMake(makeRequest);
+        return new ResponseEntity<>(savedMake, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

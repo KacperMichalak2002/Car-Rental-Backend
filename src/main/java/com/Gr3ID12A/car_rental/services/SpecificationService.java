@@ -1,15 +1,15 @@
 package com.Gr3ID12A.car_rental.services;
 
-import com.Gr3ID12A.car_rental.domain.entities.SpecificationEntity;
+import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
+import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationRequest;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface SpecificationService {
-    List<SpecificationEntity> listSpecifications();
+    List<SpecificationDto> listSpecifications();
 
-    Optional<SpecificationEntity> getSpecification(UUID id);
+    SpecificationDto getSpecification(UUID id);
 
-    SpecificationEntity createSpecification(SpecificationEntity specificationToCreate);
+    SpecificationDto createSpecification(SpecificationRequest specificationRequest);
 }

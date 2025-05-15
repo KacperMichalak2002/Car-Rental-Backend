@@ -1,6 +1,9 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
+import com.Gr3ID12A.car_rental.domain.dto.discount.DiscountDto;
+import com.Gr3ID12A.car_rental.domain.dto.discount.DiscountRequest;
 import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
+import com.Gr3ID12A.car_rental.mappers.DiscountMapper;
 import com.Gr3ID12A.car_rental.repositories.DiscountRepository;
 import com.Gr3ID12A.car_rental.services.DiscountService;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +17,29 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DiscountServiceImpl implements DiscountService {
     private final DiscountRepository discountRepository;
-
+    private final DiscountMapper discountMapper;
     @Override
-    public List<DiscountEntity> listDiscounts() {
-        return discountRepository.findAll();
+    public List<DiscountDto> listDiscounts() {
+
+        return discountRepository.findAll()
+                .stream()
+                .map(discountMapper::toDto)
+                .toList();
     }
 
     @Override
-    public DiscountEntity createDiscount(DiscountEntity discountToCreate) {
-        return discountRepository.save(discountToCreate);
+    public DiscountDto createDiscount(DiscountRequest discountRequest) {
+        DiscountEntity discountToCreate = discountMapper.toEntity(discountRequest);
+        DiscountEntity savedDiscount = discountRepository.save(discountToCreate);
+        return discountMapper.toDto(savedDiscount);
     }
 
     @Override
-    public Optional<DiscountEntity> getDiscount(UUID id) {
-        return discountRepository.findById(id);
+    public DiscountDto getDiscount(UUID id) {
+        Optional<DiscountEntity> foundDiscount = discountRepository.findById(id);
+        return foundDiscount.map(discountEntity -> {
+            DiscountDto discountDto = discountMapper.toDto(discountEntity);
+            return discountDto;
+        }).orElse(null);
     }
 }

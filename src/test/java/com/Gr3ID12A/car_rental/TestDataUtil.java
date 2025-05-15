@@ -1,6 +1,8 @@
 package com.Gr3ID12A.car_rental;
 
+import com.Gr3ID12A.car_rental.domain.dto.address.AddressRequest;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
+import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.entities.*;
 
 import java.util.UUID;
@@ -50,5 +52,23 @@ public final class TestDataUtil {
                 .name("Touran")
                 .build();
 
+    }
+
+
+    public static PickUpPlaceRequest createTestPickUpPlace(UUID addressId) {
+        return PickUpPlaceRequest.builder()
+                .name("Kielce Park Technologiczny")
+                .addressId(addressId)
+                .build();
+    }
+
+    public static AddressRequest createTestAddressRequest() {
+        return AddressRequest.builder()
+                .country("Polska")
+                .city("Kielce")
+                .postal_code("25-663")
+                .street("Olszewskiego")
+                .street_number("6")
+                .build();
     }
 }
