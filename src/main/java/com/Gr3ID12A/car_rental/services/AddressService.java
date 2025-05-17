@@ -18,4 +18,6 @@ public interface AddressService {
     boolean isExist(UUID id);
 
     AddressDto partialUpdate(UUID id, AddressRequest addressRequest);
+
+    AddressEntity getAddressEntityById(UUID id);
 }

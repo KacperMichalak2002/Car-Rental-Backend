@@ -22,6 +22,7 @@ import java.util.UUID;
 public class PickUpPlaceServiceImpl implements PickUpPlaceService {
     private final PickUpPlaceRepository pickUpPlaceRepository;
     private final PickUpPlaceMapper pickUpPlaceMapper;
+    private final AddressService addressService;
     @Override
     public List<PickUpPlaceDto> listPickUpPlaces() {
         return pickUpPlaceRepository.findAll()
@@ -32,8 +33,10 @@ public class PickUpPlaceServiceImpl implements PickUpPlaceService {
 
     @Override
     public PickUpPlaceDto createPickUpPlace(PickUpPlaceRequest pickUpPlaceRequest) {
-            PickUpPlaceEntity pickUpPlaceToCreate = pickUpPlaceMapper.toEntity(pickUpPlaceRequest);
-            PickUpPlaceEntity pickUpPlaceSaved = pickUpPlaceRepository.save(pickUpPlaceToCreate);
-            return  pickUpPlaceMapper.toDto(pickUpPlaceSaved);
+        AddressEntity address = addressService.getAddressEntityById(pickUpPlaceRequest.getAddressId());
+        PickUpPlaceEntity pickUpPlaceToCreate = pickUpPlaceMapper.toEntity(pickUpPlaceRequest);
+        pickUpPlaceToCreate.setAddress(address);
+        PickUpPlaceEntity pickUpPlaceSaved = pickUpPlaceRepository.save(pickUpPlaceToCreate);
+        return  pickUpPlaceMapper.toDto(pickUpPlaceSaved);
     }
 }

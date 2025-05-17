@@ -65,4 +65,8 @@ public class AddressServiceImpl implements AddressService {
 
         return addressMapper.toDto(updatedAddress);
     }
+
+    public AddressEntity getAddressEntityById(UUID id) {
+        return addressRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Address not found"));
+    }
 }

@@ -15,5 +15,4 @@ public interface AddressMapper {
 
     AddressEntity toEntity(AddressRequest addressRequest);
 
-    AddressEntity map(UUID id); // Used in creating PickUpPlace to map from AddressId to Address object
 }
