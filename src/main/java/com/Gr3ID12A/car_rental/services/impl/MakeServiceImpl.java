@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.domain.entities.MakeEntity;
 import com.Gr3ID12A.car_rental.mappers.MakeMapper;
 import com.Gr3ID12A.car_rental.repositories.MakeRepository;
 import com.Gr3ID12A.car_rental.services.MakeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,15 @@ public class MakeServiceImpl implements MakeService {
     @Override
     public void delete(UUID id) {
         makeRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean isExist(UUID makeId) {
+        return makeRepository.existsById(makeId);
+    }
+
+    @Override
+    public MakeEntity getMakeById(UUID makeId) {
+        return makeRepository.findById(makeId).orElseThrow(() -> new EntityNotFoundException("Make not found"));
     }
 }

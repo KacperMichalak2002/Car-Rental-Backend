@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.domain.entities.BodyTypeEntity;
 import com.Gr3ID12A.car_rental.mappers.BodyTypeMapper;
 import com.Gr3ID12A.car_rental.repositories.BodyTypeRepository;
 import com.Gr3ID12A.car_rental.services.BodyTypeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +37,15 @@ public class BodyTypeServiceImpl implements BodyTypeService {
     @Override
     public void delete(UUID id) {
         bodyTypeRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean isExist(UUID bodyTypeId) {
+        return bodyTypeRepository.existsById(bodyTypeId);
+    }
+
+    @Override
+    public BodyTypeEntity getBodyTypeById(UUID bodyTypeId) {
+        return bodyTypeRepository.findById(bodyTypeId).orElseThrow(() -> new EntityNotFoundException("Body Type not found"));
     }
 }

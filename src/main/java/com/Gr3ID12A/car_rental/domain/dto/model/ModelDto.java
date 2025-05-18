@@ -1,4 +1,4 @@
-package com.Gr3ID12A.car_rental.domain.dto;
+package com.Gr3ID12A.car_rental.domain.dto.model;
 
 import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
