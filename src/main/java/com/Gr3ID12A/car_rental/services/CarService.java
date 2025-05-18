@@ -12,4 +12,8 @@ public interface CarService {
     List<CarDto> listCars();
     CarDto createCar(CarRequest carRequest);
     CarDto getCar(UUID id);
+
+    boolean isExist(UUID id);
+
+    CarDto partialUpdateCar(UUID id, CarRequest carRequest);
 }

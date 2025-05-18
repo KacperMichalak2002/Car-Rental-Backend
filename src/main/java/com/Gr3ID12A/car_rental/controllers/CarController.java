@@ -53,4 +53,15 @@ public class CarController {
             return ResponseEntity.ok(carDto);
         }
     }
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<CarDto> partialUpdate(@PathVariable("id") UUID id, @RequestBody CarRequest carRequest){
+        boolean carExist = carService.isExist(id);
+        if(!carExist){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        CarDto updatedCar = carService.partialUpdateCar(id, carRequest);
+        return new ResponseEntity<>(updatedCar, HttpStatus.OK);
+    }
+
 }

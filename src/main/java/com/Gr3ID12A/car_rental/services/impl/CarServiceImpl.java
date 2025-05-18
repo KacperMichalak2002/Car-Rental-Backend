@@ -57,4 +57,25 @@ public class CarServiceImpl implements CarService {
         }).orElse(null);
 
     }
+
+    @Override
+    public boolean isExist(UUID id) {
+        return carRepository.existsById(id);
+    }
+
+    @Override
+    public CarDto partialUpdateCar(UUID id, CarRequest carRequest) {
+        CarEntity carToUpdate = carMapper.toEntityFromRequest(carRequest);
+
+        CarEntity updatedCar = carRepository.findById(id).map(existingCar ->{
+           Optional.ofNullable(carToUpdate.getCost()).ifPresent(existingCar::setCost);
+           Optional.ofNullable(carToUpdate.getDeposit()).ifPresent(existingCar::setDeposit);
+           Optional.ofNullable(carToUpdate.getAvailability()).ifPresent(existingCar::setAvailability);
+           Optional.ofNullable(carToUpdate.getImage_url()).ifPresent(existingCar::setImage_url);
+           Optional.ofNullable(carToUpdate.getDescription()).ifPresent(existingCar::setDescription);
+           return carRepository.save(existingCar);
+        }).orElseThrow(() -> new EntityNotFoundException("Car does not exist"));
+
+        return carMapper.toDto(updatedCar);
+    }
 }
