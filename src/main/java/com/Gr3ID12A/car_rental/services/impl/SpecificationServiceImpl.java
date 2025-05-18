@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.domain.entities.SpecificationEntity;
 import com.Gr3ID12A.car_rental.mappers.SpecificationMapper;
 import com.Gr3ID12A.car_rental.repositories.SpecificationRepository;
 import com.Gr3ID12A.car_rental.services.SpecificationService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,5 +42,15 @@ public class SpecificationServiceImpl implements SpecificationService {
         SpecificationEntity specificationToCreate = specificationMapper.toEntity(specificationRequest);
         SpecificationEntity specificationSaved = specificationRepository.save(specificationToCreate);
         return specificationMapper.toDto(specificationSaved);
+    }
+
+    @Override
+    public boolean isExist(UUID specificationId) {
+        return specificationRepository.existsById(specificationId);
+    }
+
+    @Override
+    public SpecificationEntity getSpecificationEntityById(UUID specificationId) {
+        return specificationRepository.findById(specificationId).orElseThrow(() -> new EntityNotFoundException("Specification not found"));
     }
 }

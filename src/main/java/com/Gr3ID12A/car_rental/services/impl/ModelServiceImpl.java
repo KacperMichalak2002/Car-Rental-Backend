@@ -10,6 +10,7 @@ import com.Gr3ID12A.car_rental.repositories.ModelRepository;
 import com.Gr3ID12A.car_rental.services.BodyTypeService;
 import com.Gr3ID12A.car_rental.services.MakeService;
 import com.Gr3ID12A.car_rental.services.ModelService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +50,15 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public void delete(UUID id) {
         modelRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean isExist(UUID modelId) {
+        return modelRepository.existsById(modelId);
+    }
+
+    @Override
+    public ModelEntity getModelEntityById(UUID modelId) {
+        return modelRepository.findById(modelId).orElseThrow(() -> new EntityNotFoundException("Model not found"));
     }
 }
