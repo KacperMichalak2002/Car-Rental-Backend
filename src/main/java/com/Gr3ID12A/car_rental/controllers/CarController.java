@@ -64,4 +64,10 @@ public class CarController {
         return new ResponseEntity<>(updatedCar, HttpStatus.OK);
     }
 
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteCar(@PathVariable("id") UUID id){
+        carService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

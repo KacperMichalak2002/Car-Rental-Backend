@@ -16,4 +16,6 @@ public interface CarService {
     boolean isExist(UUID id);
 
     CarDto partialUpdateCar(UUID id, CarRequest carRequest);
+
+    void delete(UUID id);
 }

@@ -78,4 +78,9 @@ public class CarServiceImpl implements CarService {
 
         return carMapper.toDto(updatedCar);
     }
+
+    @Override
+    public void delete(UUID id) {
+        carRepository.deleteById(id);
+    }
 }
