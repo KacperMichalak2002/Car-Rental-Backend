@@ -39,4 +39,9 @@ public class PickUpPlaceServiceImpl implements PickUpPlaceService {
         PickUpPlaceEntity pickUpPlaceSaved = pickUpPlaceRepository.save(pickUpPlaceToCreate);
         return  pickUpPlaceMapper.toDto(pickUpPlaceSaved);
     }
+
+    @Override
+    public PickUpPlaceEntity getPickUpPlaceById(UUID pickUpPlaceId) {
+        return pickUpPlaceRepository.findById(pickUpPlaceId).orElseThrow(() -> new EntityNotFoundException("Pick up place not found"));
+    }
 }

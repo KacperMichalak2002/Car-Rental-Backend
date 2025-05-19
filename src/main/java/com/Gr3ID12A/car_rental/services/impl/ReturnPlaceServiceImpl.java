@@ -8,10 +8,12 @@ import com.Gr3ID12A.car_rental.mappers.ReturnPlaceMapper;
 import com.Gr3ID12A.car_rental.repositories.ReturnPlaceRepository;
 import com.Gr3ID12A.car_rental.services.AddressService;
 import com.Gr3ID12A.car_rental.services.ReturnPlaceService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,10 @@ public class ReturnPlaceServiceImpl implements ReturnPlaceService {
         returnPlaceEntityToCreate.setAddress(address);
         ReturnPlaceEntity savedReturnPlace = returnPlaceRepository.save(returnPlaceEntityToCreate);
         return returnPlaceMapper.toDto(savedReturnPlace);
+    }
+
+    @Override
+    public ReturnPlaceEntity getReturnPlaceEntityById(UUID returnPlaceId) {
+        return returnPlaceRepository.findById(returnPlaceId).orElseThrow(() -> new EntityNotFoundException("Return place not found"));
     }
 }
