@@ -3,6 +3,8 @@ package com.Gr3ID12A.car_rental.services;
 
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
+import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,4 +21,6 @@ public interface CustomerService {
     CustomerDto partialUpdate(UUID id, CustomerRequest customerRequest);
 
     void deleteCustomer(UUID id);
+
+    CustomerEntity getCustomerEntityById(@NotNull UUID customerId);
 }
