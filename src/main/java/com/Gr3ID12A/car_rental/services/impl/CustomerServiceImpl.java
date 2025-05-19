@@ -1,0 +1,72 @@
+package com.Gr3ID12A.car_rental.services.impl;
+
+import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
+import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
+import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
+import com.Gr3ID12A.car_rental.mappers.CustomerMapper;
+import com.Gr3ID12A.car_rental.repositories.CustomerRepository;
+import com.Gr3ID12A.car_rental.services.CustomerService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class CustomerServiceImpl implements CustomerService {
+    private final CustomerRepository customerRepository;
+    private final CustomerMapper customerMapper;
+
+    @Override
+    public List<CustomerDto> listCustomers() {
+        return customerRepository.findAll()
+                .stream()
+                .map(customerMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public CustomerDto getCustomer(UUID id) {
+        Optional<CustomerEntity> customer = customerRepository.findById(id);
+        return customer.map(customerEntity -> {
+            CustomerDto customerDto = customerMapper.toDto(customerEntity);
+            return customerDto;
+        }).orElse(null);
+    }
+
+    @Override
+    public CustomerDto createCustomer(CustomerRequest customerRequest) {
+        CustomerEntity customerToSave = customerMapper.toEntity(customerRequest);
+        CustomerEntity savedCustomer = customerRepository.save(customerToSave);
+        return customerMapper.toDto(savedCustomer);
+    }
+
+    @Override
+    public boolean isExist(UUID id) {
+        return customerRepository.existsById(id);
+    }
+
+    @Override
+    public CustomerDto partialUpdate(UUID id, CustomerRequest customerRequest) {
+        CustomerEntity customerToUpdate = customerMapper.toEntity(customerRequest);
+
+        CustomerEntity updatedCutomer = customerRepository.findById(id).map(existingCustomer -> {
+            Optional.ofNullable(customerToUpdate.getPersonalData()).ifPresent(existingCustomer::setPersonalData);
+            Optional.ofNullable(customerToUpdate.getCustomerDiscounts()).ifPresent(existingCustomer::setCustomerDiscounts);
+            Optional.ofNullable(customerToUpdate.getLogin()).ifPresent(existingCustomer::setLogin);
+            Optional.ofNullable(customerToUpdate.getPassword()).ifPresent(existingCustomer::setPassword);
+            Optional.ofNullable(customerToUpdate.getLoyalty_points()).ifPresent(existingCustomer::setLoyalty_points);
+            return customerRepository.save(existingCustomer);
+        }).orElseThrow(() -> new EntityNotFoundException("Customer doest not exsit"));
+
+        return customerMapper.toDto(updatedCutomer);
+    }
+
+    @Override
+    public void deleteCustomer(UUID id) {
+        customerRepository.deleteById(id);
+    }
+}

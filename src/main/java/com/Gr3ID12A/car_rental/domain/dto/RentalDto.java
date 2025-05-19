@@ -1,6 +1,7 @@
 package com.Gr3ID12A.car_rental.domain.dto;
 
 import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
+import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
 import lombok.AllArgsConstructor;
