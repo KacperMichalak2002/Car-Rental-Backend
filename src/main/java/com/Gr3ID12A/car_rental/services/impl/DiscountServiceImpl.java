@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
 import com.Gr3ID12A.car_rental.mappers.DiscountMapper;
 import com.Gr3ID12A.car_rental.repositories.DiscountRepository;
 import com.Gr3ID12A.car_rental.services.DiscountService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,5 +42,10 @@ public class DiscountServiceImpl implements DiscountService {
             DiscountDto discountDto = discountMapper.toDto(discountEntity);
             return discountDto;
         }).orElse(null);
+    }
+
+    @Override
+    public DiscountEntity getDiscountEntityById(UUID discountId) {
+        return discountRepository.findById(discountId).orElseThrow(() -> new EntityNotFoundException("Discount not found"));
     }
 }

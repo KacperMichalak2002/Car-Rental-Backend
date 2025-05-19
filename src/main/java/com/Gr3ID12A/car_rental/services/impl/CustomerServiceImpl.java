@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto partialUpdate(UUID id, CustomerRequest customerRequest) {
         CustomerEntity customerToUpdate = customerMapper.toEntity(customerRequest);
 
-        CustomerEntity updatedCutomer = customerRepository.findById(id).map(existingCustomer -> {
+        CustomerEntity updatedCustomer = customerRepository.findById(id).map(existingCustomer -> {
             Optional.ofNullable(customerToUpdate.getPersonalData()).ifPresent(existingCustomer::setPersonalData);
             Optional.ofNullable(customerToUpdate.getCustomerDiscounts()).ifPresent(existingCustomer::setCustomerDiscounts);
             Optional.ofNullable(customerToUpdate.getLogin()).ifPresent(existingCustomer::setLogin);
@@ -62,11 +62,16 @@ public class CustomerServiceImpl implements CustomerService {
             return customerRepository.save(existingCustomer);
         }).orElseThrow(() -> new EntityNotFoundException("Customer doest not exsit"));
 
-        return customerMapper.toDto(updatedCutomer);
+        return customerMapper.toDto(updatedCustomer);
     }
 
     @Override
     public void deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public CustomerEntity getCustomerEntityById(UUID customerId) {
+        return customerRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("Customer not found"));
     }
 }

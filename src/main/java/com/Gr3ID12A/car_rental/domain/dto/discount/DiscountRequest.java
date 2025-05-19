@@ -1,6 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.dto.discount;
 
-import com.Gr3ID12A.car_rental.domain.dto.CustomerDiscountsDto;
+import com.Gr3ID12A.car_rental.domain.dto.customerDiscounts.CustomerDiscountsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
