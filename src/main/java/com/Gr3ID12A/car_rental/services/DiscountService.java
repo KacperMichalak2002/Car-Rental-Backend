@@ -15,4 +15,6 @@ public interface DiscountService {
     DiscountDto getDiscount(UUID id);
 
     DiscountEntity getDiscountEntityById(UUID discountId);
+
+    boolean isExist(UUID discountId);
 }

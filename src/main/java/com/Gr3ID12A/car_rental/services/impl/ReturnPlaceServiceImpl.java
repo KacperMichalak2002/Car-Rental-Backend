@@ -32,15 +32,24 @@ public class ReturnPlaceServiceImpl implements ReturnPlaceService {
 
     @Override
     public ReturnPlaceDto createReturnPlace(ReturnPlaceRequest returnPlaceRequest) {
-        AddressEntity address = addressService.getAddressEntityById(returnPlaceRequest.getAddressId());
         ReturnPlaceEntity returnPlaceEntityToCreate = returnPlaceMapper.toEntity(returnPlaceRequest);
+
+        AddressEntity address = new AddressEntity();
+        address.setId(returnPlaceRequest.getAddressId());
+
         returnPlaceEntityToCreate.setAddress(address);
         ReturnPlaceEntity savedReturnPlace = returnPlaceRepository.save(returnPlaceEntityToCreate);
+
         return returnPlaceMapper.toDto(savedReturnPlace);
     }
 
     @Override
     public ReturnPlaceEntity getReturnPlaceEntityById(UUID returnPlaceId) {
         return returnPlaceRepository.findById(returnPlaceId).orElseThrow(() -> new EntityNotFoundException("Return place not found"));
+    }
+
+    @Override
+    public boolean isExist(UUID returnPlaceId) {
+        return returnPlaceRepository.existsById(returnPlaceId);
     }
 }

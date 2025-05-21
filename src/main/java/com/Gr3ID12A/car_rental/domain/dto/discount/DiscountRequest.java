@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,5 +22,5 @@ public class DiscountRequest {
     private Date date_of_end;
     private String status;
     private String description;
-    private Set<CustomerDiscountsDto> customerDiscounts;
+    private Set<UUID> customerDiscounts;
 }

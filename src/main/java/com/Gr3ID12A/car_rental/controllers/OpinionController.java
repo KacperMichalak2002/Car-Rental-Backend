@@ -2,6 +2,8 @@ package com.Gr3ID12A.car_rental.controllers;
 
 import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionDto;
 import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
+import com.Gr3ID12A.car_rental.services.CarService;
+import com.Gr3ID12A.car_rental.services.CustomerService;
 import com.Gr3ID12A.car_rental.services.OpinionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OpinionController {
     private final OpinionService opinionService;
+    private final CarService carService;
+    private final CustomerService customerService;
 
     @GetMapping
     public ResponseEntity<List<OpinionDto>> listOpinions(){
@@ -31,6 +35,13 @@ public class OpinionController {
 
     @PostMapping
     public ResponseEntity<OpinionDto> createOpinion(@RequestBody OpinionRequest opinionRequest){
+        boolean carExist = carService.isExist(opinionRequest.getCarId());
+        boolean customerExist = customerService.isExist(opinionRequest.getCustomerId());
+
+        if(!carExist || !customerExist){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         OpinionDto createdOpinion = opinionService.createOpinion(opinionRequest);
         return new ResponseEntity<>(createdOpinion, HttpStatus.CREATED);
     }

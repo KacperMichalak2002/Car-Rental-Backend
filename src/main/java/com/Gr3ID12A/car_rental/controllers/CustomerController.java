@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.controllers;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.services.CustomerService;
+import com.Gr3ID12A.car_rental.services.PersonalDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
+    private final PersonalDataService personalDataService;
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> listCustomers(){
@@ -35,6 +37,10 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerRequest customerRequest){
+        boolean personalDataExist = personalDataService.isExist(customerRequest.getPersonalDataId());
+        if(!personalDataExist){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         CustomerDto savedCustomer = customerService.createCustomer(customerRequest);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }

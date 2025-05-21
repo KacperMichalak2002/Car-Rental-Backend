@@ -10,8 +10,11 @@ import com.Gr3ID12A.car_rental.repositories.CustomerDiscountsRepository;
 import com.Gr3ID12A.car_rental.services.CustomerDiscountsService;
 import com.Gr3ID12A.car_rental.services.CustomerService;
 import com.Gr3ID12A.car_rental.services.DiscountService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +26,30 @@ public class CustomerDiscountsServiceImpl implements CustomerDiscountsService {
     private final DiscountService discountService;
 
     @Override
+    @Transactional
     public CustomerDiscountsDto assignDiscount(CustomerDiscountsRequest customerDiscountsRequest) {
         CustomerDiscountsEntity customerDiscountsToCreate = customerDiscountsMapper.toEntity(customerDiscountsRequest);
-        CustomerEntity customer = customerService.getCustomerEntityById(customerDiscountsRequest.getCustomerId());
-        DiscountEntity discount = discountService.getDiscountEntityById(customerDiscountsRequest.getDiscountId());
 
+        CustomerEntity customer = new CustomerEntity();
+        customer.setId(customerDiscountsRequest.getCustomerId());
+
+        DiscountEntity discount = new DiscountEntity();
+        discount.setId(customerDiscountsRequest.getDiscountId());
         customerDiscountsToCreate.setCustomer(customer);
         customerDiscountsToCreate.setDiscount(discount);
+
+        customerDiscountsToCreate.setStatus("ACTIVE");
 
         CustomerDiscountsEntity customerDiscountsSaved = customerDiscountsRepository.save(customerDiscountsToCreate);
 
         return customerDiscountsMapper.toDto(customerDiscountsSaved);
+    }
+
+    @Override
+    public List<CustomerDiscountsDto> listCustomerDiscounts() {
+        return customerDiscountsRepository.findAll()
+                .stream()
+                .map(customerDiscountsMapper::toDto)
+                .toList();
     }
 }

@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.services.impl;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
+import com.Gr3ID12A.car_rental.domain.entities.PersonalDataEntity;
 import com.Gr3ID12A.car_rental.mappers.CustomerMapper;
 import com.Gr3ID12A.car_rental.repositories.CustomerRepository;
 import com.Gr3ID12A.car_rental.services.CustomerService;
@@ -40,6 +41,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto createCustomer(CustomerRequest customerRequest) {
         CustomerEntity customerToSave = customerMapper.toEntity(customerRequest);
+
+        PersonalDataEntity personalData = new PersonalDataEntity();
+        personalData.setId(customerRequest.getPersonalDataId());
+
+        customerToSave.setPersonalData(personalData);
+
         CustomerEntity savedCustomer = customerRepository.save(customerToSave);
         return customerMapper.toDto(savedCustomer);
     }

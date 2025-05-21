@@ -2,7 +2,7 @@ package com.Gr3ID12A.car_rental.controllers;
 
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
-import com.Gr3ID12A.car_rental.services.RentalService;
+import com.Gr3ID12A.car_rental.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,10 @@ import java.util.UUID;
 public class RentalController {
 
     private final RentalService rentalService;
+    private final CustomerService customerService;
+    private final CarService carService;
+    private final PickUpPlaceService pickUpPlaceService;
+    private final ReturnPlaceService returnPlaceService;
 
     @GetMapping
     public ResponseEntity<List<RentalDto>> listRental(){
@@ -32,6 +36,15 @@ public class RentalController {
 
     @PostMapping
     public ResponseEntity<RentalDto> createRental(@RequestBody RentalRequest rentalRequest){
+        boolean customerExist = customerService.isExist(rentalRequest.getCustomerId());
+        boolean carExist = carService.isExist(rentalRequest.getCarId());
+        boolean pickUpPlaceExist = pickUpPlaceService.isExist(rentalRequest.getPick_up_placeId());
+        boolean returnPlaceExist = returnPlaceService.isExist(rentalRequest.getReturn_placeId());
+
+        if(!customerExist || !carExist || !pickUpPlaceExist || !returnPlaceExist) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         RentalDto createdRental = rentalService.createRental(rentalRequest);
         return new ResponseEntity<>(createdRental, HttpStatus.CREATED);
     }

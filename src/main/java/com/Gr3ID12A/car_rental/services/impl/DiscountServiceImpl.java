@@ -48,4 +48,10 @@ public class DiscountServiceImpl implements DiscountService {
     public DiscountEntity getDiscountEntityById(UUID discountId) {
         return discountRepository.findById(discountId).orElseThrow(() -> new EntityNotFoundException("Discount not found"));
     }
+
+    @Override
+    public boolean isExist(UUID discountId) {
+        return discountRepository.existsById(discountId);
+    }
+    
 }

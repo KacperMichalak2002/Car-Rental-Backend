@@ -36,8 +36,11 @@ public class OpinionServiceImpl implements OpinionService {
 
     @Override
     public OpinionDto createOpinion(OpinionRequest opinionRequest) {
-        CustomerEntity customer = customerService.getCustomerEntityById(opinionRequest.getCustomerId());
-        CarEntity car = carService.getCarEntityById(opinionRequest.getCarId());
+        CustomerEntity customer = new CustomerEntity();
+        customer.setId(opinionRequest.getCustomerId());
+
+        CarEntity car = new CarEntity();
+        car.setId(opinionRequest.getCarId());
 
         OpinionEntity opinionToSave = opinionMapper.toEntity(opinionRequest);
 

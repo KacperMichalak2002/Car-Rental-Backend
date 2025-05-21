@@ -1,5 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.dto.pickUpPlace;
 
+import com.Gr3ID12A.car_rental.domain.dto.address.AddressDto;
 import com.Gr3ID12A.car_rental.domain.entities.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +16,5 @@ import java.util.UUID;
 public class PickUpPlaceDto {
     private UUID id;
     private String name;
-    private AddressEntity address;
+    private AddressDto address;
 }

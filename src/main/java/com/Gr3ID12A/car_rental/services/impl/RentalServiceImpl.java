@@ -41,10 +41,17 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public RentalDto createRental(RentalRequest rentalRequest) {
-        CustomerEntity customer = customerService.getCustomerEntityById(rentalRequest.getCustomerId());
-        CarEntity car = carService.getCarEntityById(rentalRequest.getCarId());
-        PickUpPlaceEntity pickUpPlace = pickUpPlaceService.getPickUpPlaceById(rentalRequest.getPick_up_placeId());
-        ReturnPlaceEntity returnPlace = returnPlaceService.getReturnPlaceEntityById(rentalRequest.getReturn_placeId());
+        CustomerEntity customer = new CustomerEntity();
+        customer.setId(rentalRequest.getCustomerId());
+
+        CarEntity car = new CarEntity();
+        car.setId(rentalRequest.getCarId());
+
+        PickUpPlaceEntity pickUpPlace = new PickUpPlaceEntity();
+        pickUpPlace.setId(rentalRequest.getPick_up_placeId());
+
+        ReturnPlaceEntity returnPlace = new ReturnPlaceEntity();
+        returnPlace.setId(rentalRequest.getReturn_placeId());
 
         RentalEntity rentalToCreate = rentalMapper.toEntity(rentalRequest);
 

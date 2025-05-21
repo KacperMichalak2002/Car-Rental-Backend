@@ -6,7 +6,6 @@ import com.Gr3ID12A.car_rental.domain.entities.AddressEntity;
 import com.Gr3ID12A.car_rental.domain.entities.PersonalDataEntity;
 import com.Gr3ID12A.car_rental.mappers.PersonalDataMapper;
 import com.Gr3ID12A.car_rental.repositories.PersonalDataRepository;
-import com.Gr3ID12A.car_rental.services.AddressService;
 import com.Gr3ID12A.car_rental.services.PersonalDataService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.UUID;
 public class PersonalDataServiceImpl implements PersonalDataService {
     private final PersonalDataRepository personalDataRepository;
     private final PersonalDataMapper personalDataMapper;
-    private final AddressService addressService;
 
     @Override
     public List<PersonalDataDto> listPersonalData() {
@@ -42,12 +40,14 @@ public class PersonalDataServiceImpl implements PersonalDataService {
 
     @Override
     public PersonalDataDto createPersonalData(PersonalDataRequest personalDataRequest) {
-        AddressEntity address = addressService.getAddressEntityById(personalDataRequest.getAddressId());
-
         PersonalDataEntity personalDataToCreate = personalDataMapper.toEntity(personalDataRequest);
+
+        AddressEntity address = new AddressEntity();
+        address.setId(personalDataRequest.getAddressId());
         personalDataToCreate.setAddress(address);
 
         PersonalDataEntity savedPersonalData = personalDataRepository.save(personalDataToCreate);
+
         return personalDataMapper.toDto(savedPersonalData);
     }
 

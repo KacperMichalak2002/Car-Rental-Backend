@@ -14,4 +14,6 @@ public interface PickUpPlaceService {
     PickUpPlaceDto createPickUpPlace(PickUpPlaceRequest pickUpPlaceRequest);
 
     PickUpPlaceEntity getPickUpPlaceById(UUID pickUpPlaceId);
+
+    boolean isExist(UUID pickUpPlaceId);
 }

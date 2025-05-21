@@ -14,4 +14,6 @@ public interface ReturnPlaceService {
     ReturnPlaceDto createReturnPlace( ReturnPlaceRequest returnPlaceRequest);
 
     ReturnPlaceEntity getReturnPlaceEntityById(UUID returnPlaceId);
+
+    boolean isExist(UUID returnPlaceId);
 }
