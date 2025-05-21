@@ -1,4 +1,4 @@
-package com.Gr3ID12A.car_rental.domain.dto;
+package com.Gr3ID12A.car_rental.domain.dto.payment;
 
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;

@@ -69,4 +69,9 @@ public class RentalServiceImpl implements RentalService {
     public void delete(UUID id) {
         rentalRepository.deleteById(id);
     }
+
+    @Override
+    public boolean isExist(UUID rentalId) {
+        return rentalRepository.existsById(rentalId);
+    }
 }

@@ -14,4 +14,6 @@ public interface RentalService {
     RentalDto createRental(RentalRequest rentalRequest);
 
     void delete(UUID id);
+
+    boolean isExist(UUID rentalId);
 }

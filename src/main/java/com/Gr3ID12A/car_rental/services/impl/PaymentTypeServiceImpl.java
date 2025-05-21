@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +30,10 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
         PaymentTypeEntity paymentTypeToCreate = paymentTypeMapper.toEntity(paymentTypeRequest);
         PaymentTypeEntity savedPaymentType = paymentTypeRepository.save(paymentTypeToCreate);
         return paymentTypeMapper.toDto(savedPaymentType);
+    }
+
+    @Override
+    public boolean isExist(UUID paymentTypeId) {
+        return paymentTypeRepository.existsById(paymentTypeId);
     }
 }
