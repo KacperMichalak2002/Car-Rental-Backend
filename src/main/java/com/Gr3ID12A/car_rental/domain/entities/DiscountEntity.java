@@ -36,7 +36,7 @@ public class DiscountEntity {
 
     private String description;
 
-    @OneToMany(mappedBy = "discount", fetch = FetchType.LAZY)
-    private Set<CustomerDiscountsEntity> customerDiscounts;
+    @ManyToMany(mappedBy = "discounts", fetch = FetchType.LAZY)
+    private Set<CustomerEntity> customers;
 
 }

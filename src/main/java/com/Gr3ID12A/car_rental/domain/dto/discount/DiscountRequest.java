@@ -1,6 +1,5 @@
 package com.Gr3ID12A.car_rental.domain.dto.discount;
 
-import com.Gr3ID12A.car_rental.domain.dto.customerDiscounts.CustomerDiscountsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +21,5 @@ public class DiscountRequest {
     private Date date_of_end;
     private String status;
     private String description;
-    private Set<UUID> customerDiscounts;
+    private Set<UUID> customersIds;
 }

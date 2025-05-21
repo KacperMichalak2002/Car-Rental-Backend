@@ -1,6 +1,5 @@
 package com.Gr3ID12A.car_rental.domain.dto.customer;
 
-import com.Gr3ID12A.car_rental.domain.dto.customerDiscounts.CustomerDiscountsDto;
 import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,7 @@ import java.util.UUID;
 public class CustomerDto {
     private UUID id;
     private PersonalDataDto personalData;
-    private Set<CustomerDiscountsDto> customerDiscounts;
+    private Set<UUID> discountsIds;
     private String login;
     private String password;
     private Date date_of_joining;

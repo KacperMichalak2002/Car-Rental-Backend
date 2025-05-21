@@ -27,8 +27,12 @@ public class CustomerEntity {
     @JoinColumn(name = "personal_data_id")
     private PersonalDataEntity personalData;
 
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    private Set<CustomerDiscountsEntity> customerDiscounts;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "customer_discounts",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "discount_id"))
+    private Set<DiscountEntity> discounts;
 
     private String login;
 

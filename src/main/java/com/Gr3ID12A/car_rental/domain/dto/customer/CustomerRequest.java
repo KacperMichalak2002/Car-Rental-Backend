@@ -20,7 +20,7 @@ public class CustomerRequest {
     private UUID personalDataId;
 
     @NotNull
-    private Set<UUID> customerDiscountsId;
+    private Set<UUID> discountsIds;
 
     @NotNull
     private String login;

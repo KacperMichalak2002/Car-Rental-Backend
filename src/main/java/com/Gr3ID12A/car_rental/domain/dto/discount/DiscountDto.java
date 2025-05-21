@@ -1,6 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.dto.discount;
 
-import com.Gr3ID12A.car_rental.domain.dto.customerDiscounts.CustomerDiscountsDto;
+import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,5 +23,5 @@ public class DiscountDto {
     private Date date_of_end;
     private String status;
     private String description;
-    private Set<CustomerDiscountsDto> customerDiscounts;
+    private Set<UUID> customersIds;
 }

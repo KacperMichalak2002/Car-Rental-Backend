@@ -62,7 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerEntity updatedCustomer = customerRepository.findById(id).map(existingCustomer -> {
             Optional.ofNullable(customerToUpdate.getPersonalData()).ifPresent(existingCustomer::setPersonalData);
-            Optional.ofNullable(customerToUpdate.getCustomerDiscounts()).ifPresent(existingCustomer::setCustomerDiscounts);
+            Optional.ofNullable(customerToUpdate.getDiscounts()).ifPresent(existingCustomer::setDiscounts);
             Optional.ofNullable(customerToUpdate.getLogin()).ifPresent(existingCustomer::setLogin);
             Optional.ofNullable(customerToUpdate.getPassword()).ifPresent(existingCustomer::setPassword);
             Optional.ofNullable(customerToUpdate.getLoyalty_points()).ifPresent(existingCustomer::setLoyalty_points);
