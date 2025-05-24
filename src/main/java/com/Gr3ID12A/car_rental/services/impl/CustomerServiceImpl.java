@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.services.impl;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
+import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
 import com.Gr3ID12A.car_rental.domain.entities.PersonalDataEntity;
 import com.Gr3ID12A.car_rental.mappers.CustomerMapper;
 import com.Gr3ID12A.car_rental.repositories.CustomerRepository;
@@ -10,10 +11,13 @@ import com.Gr3ID12A.car_rental.services.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
+    @Transactional
     public List<CustomerDto> listCustomers() {
         return customerRepository.findAll()
                 .stream()
@@ -44,6 +49,15 @@ public class CustomerServiceImpl implements CustomerService {
 
         PersonalDataEntity personalData = new PersonalDataEntity();
         personalData.setId(customerRequest.getPersonalDataId());
+
+        Set<DiscountEntity> dicsounts = customerRequest.getDiscountsIds()
+                        .stream().map(discount ->{
+                            DiscountEntity newDiscount = new DiscountEntity();
+                            newDiscount.setId(discount);
+                            return newDiscount;
+                }).collect(Collectors.toSet());
+
+        customerToSave.setDiscounts(dicsounts);
 
         customerToSave.setPersonalData(personalData);
 

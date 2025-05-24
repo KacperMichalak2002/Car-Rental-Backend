@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,6 +38,6 @@ public class DiscountEntity {
     private String description;
 
     @ManyToMany(mappedBy = "discounts", fetch = FetchType.LAZY)
-    private Set<CustomerEntity> customers;
+    private Set<CustomerEntity> customers = new HashSet<>();
 
 }

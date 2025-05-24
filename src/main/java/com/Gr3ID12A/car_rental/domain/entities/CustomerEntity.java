@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class CustomerEntity {
             name = "customer_discounts",
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "discount_id"))
-    private Set<DiscountEntity> discounts;
+    private Set<DiscountEntity> discounts = new HashSet<>();
 
     private String login;
 
