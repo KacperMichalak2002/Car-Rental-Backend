@@ -24,4 +24,12 @@ public class UserController {
         return new ResponseEntity<>("User registered", HttpStatus.CREATED);
     }
 
+    @PostMapping(path = "/login")
+    public ResponseEntity<String> login(@RequestBody UserRequest userRequest){
+
+        String verified = userService.verify(userRequest);
+
+        return new ResponseEntity<>(verified, HttpStatus.OK);
+    }
+
 }
