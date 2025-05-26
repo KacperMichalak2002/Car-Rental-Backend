@@ -25,6 +25,10 @@ public class CustomerEntity {
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private UserEntity user;
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_data_id")
     private PersonalDataEntity personalData;
 
@@ -34,10 +38,6 @@ public class CustomerEntity {
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "discount_id"))
     private Set<DiscountEntity> discounts = new HashSet<>();
-
-    private String login;
-
-    private String password;
 
     private Date date_of_joining;
 

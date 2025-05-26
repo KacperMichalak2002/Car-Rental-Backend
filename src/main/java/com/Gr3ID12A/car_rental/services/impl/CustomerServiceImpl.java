@@ -5,6 +5,7 @@ import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
 import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
 import com.Gr3ID12A.car_rental.domain.entities.PersonalDataEntity;
+import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.mappers.CustomerMapper;
 import com.Gr3ID12A.car_rental.repositories.CustomerRepository;
 import com.Gr3ID12A.car_rental.services.CustomerService;
@@ -47,8 +48,14 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDto createCustomer(CustomerRequest customerRequest) {
         CustomerEntity customerToSave = customerMapper.toEntity(customerRequest);
 
+        UserEntity user = new UserEntity();
+        user.setUuid(customerRequest.getUserId());
+        customerToSave.setUser(user);
+
+
         PersonalDataEntity personalData = new PersonalDataEntity();
         personalData.setId(customerRequest.getPersonalDataId());
+        customerToSave.setPersonalData(personalData);
 
         Set<DiscountEntity> dicsounts = customerRequest.getDiscountsIds()
                         .stream().map(discount ->{
@@ -59,7 +66,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerToSave.setDiscounts(dicsounts);
 
-        customerToSave.setPersonalData(personalData);
+
 
         CustomerEntity savedCustomer = customerRepository.save(customerToSave);
         return customerMapper.toDto(savedCustomer);
@@ -77,8 +84,6 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerEntity updatedCustomer = customerRepository.findById(id).map(existingCustomer -> {
             Optional.ofNullable(customerToUpdate.getPersonalData()).ifPresent(existingCustomer::setPersonalData);
             Optional.ofNullable(customerToUpdate.getDiscounts()).ifPresent(existingCustomer::setDiscounts);
-            Optional.ofNullable(customerToUpdate.getLogin()).ifPresent(existingCustomer::setLogin);
-            Optional.ofNullable(customerToUpdate.getPassword()).ifPresent(existingCustomer::setPassword);
             Optional.ofNullable(customerToUpdate.getLoyalty_points()).ifPresent(existingCustomer::setLoyalty_points);
             return customerRepository.save(existingCustomer);
         }).orElseThrow(() -> new EntityNotFoundException("Customer doest not exsit"));

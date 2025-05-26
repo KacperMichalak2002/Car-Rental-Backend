@@ -17,16 +17,13 @@ import java.util.UUID;
 public class CustomerRequest {
 
     @NotNull
+    private UUID userId;
+
+    @NotNull
     private UUID personalDataId;
 
-    @NotNull
     private Set<UUID> discountsIds;
 
-    @NotNull
-    private String login;
-
-    @NotNull
-    private String password;
     private Date date_of_joining;
     private int loyalty_points;
 }
