@@ -2,10 +2,13 @@ package com.Gr3ID12A.car_rental.services.impl;
 
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
 import com.Gr3ID12A.car_rental.mappers.UserMapper;
+import com.Gr3ID12A.car_rental.repositories.TokenRepository;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
 import com.Gr3ID12A.car_rental.services.JWTService;
-import com.Gr3ID12A.car_rental.services.UserService;
+import com.Gr3ID12A.car_rental.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
+
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final AuthenticationManager authenticationManager;
@@ -44,7 +49,25 @@ public class UserServiceImpl implements UserService {
                         (userRequest.getUsername(), userRequest.getPassword()));
 
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(userRequest.getUsername());
+            String generatedToken = jwtService.generateToken(userRequest.getUsername());
+
+            UserEntity user = userRepository.findByUsername(userRequest.getUsername());
+
+            if(user == null){
+                return "Failed user not found";
+            }
+
+            TokenEntity tokenToBeSaved = TokenEntity.builder()
+                    .user(user)
+                    .token(generatedToken)
+                    .tokenType(TokenType.BEARER)
+                    .expired(false)
+                    .revoked(false)
+                    .build();
+
+            tokenRepository.save(tokenToBeSaved);
+
+            return generatedToken;
         }
 
 

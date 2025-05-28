@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerEntity customerToSave = customerMapper.toEntity(customerRequest);
 
         UserEntity user = new UserEntity();
-        user.setUuid(customerRequest.getUserId());
+        user.setId(customerRequest.getUserId());
         customerToSave.setUser(user);
 
 

@@ -1,8 +1,7 @@
 package com.Gr3ID12A.car_rental.controllers;
 
-import com.Gr3ID12A.car_rental.domain.dto.user.UserDto;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
-import com.Gr3ID12A.car_rental.services.UserService;
+import com.Gr3ID12A.car_rental.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,22 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = "/auth")
 @RequiredArgsConstructor
-public class UserController {
+public class AuthController {
 
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(path = "/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequest userRequest){
-         userService.registerUser(userRequest);
+         authenticationService.registerUser(userRequest);
         return new ResponseEntity<>("User registered", HttpStatus.CREATED);
     }
 
     @PostMapping(path = "/login")
     public ResponseEntity<String> login(@RequestBody UserRequest userRequest){
 
-        String verified = userService.verify(userRequest);
+        String verified = authenticationService.verify(userRequest);
 
         return new ResponseEntity<>(verified, HttpStatus.OK);
     }
