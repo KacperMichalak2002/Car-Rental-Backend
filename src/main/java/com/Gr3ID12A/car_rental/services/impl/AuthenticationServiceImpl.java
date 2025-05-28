@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +51,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if(authentication.isAuthenticated()){
             String generatedToken = jwtService.generateToken(userRequest.getUsername());
-
             UserEntity user = userRepository.findByUsername(userRequest.getUsername());
+
+            revokeAllUserTokens(user);
 
             if(user == null){
                 return "Failed user not found";
@@ -69,8 +71,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             return generatedToken;
         }
-
-
         return "Failed";
     }
+
+    @Override
+    public void revokeAllUserTokens(UserEntity user) {
+        List<TokenEntity> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+
+        if(validUserTokens.isEmpty())
+            return;
+
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validUserTokens);
+
+    }
+
 }

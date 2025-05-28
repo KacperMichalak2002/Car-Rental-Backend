@@ -1,5 +1,6 @@
 package com.Gr3ID12A.car_rental.config.filter;
 
+import com.Gr3ID12A.car_rental.repositories.TokenRepository;
 import com.Gr3ID12A.car_rental.services.JWTService;
 import com.Gr3ID12A.car_rental.services.impl.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -8,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JWTService jwtService;
     private final MyUserDetailsService userDetailsService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -47,7 +48,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if(jwtService.validateToken(token, userDetails)){
+            boolean isTokenValid = tokenRepository.findByToken(token)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+
+            if(jwtService.validateToken(token, userDetails) && isTokenValid){
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
