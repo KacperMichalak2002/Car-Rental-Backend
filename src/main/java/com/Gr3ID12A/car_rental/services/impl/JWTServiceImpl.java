@@ -51,15 +51,15 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return parseToken(token).getSubject();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
-        final Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);
+    private Date extractExpiration(String token) {
+
+        return parseToken(token).getExpiration();
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims parseToken(String token){
         try{
             return Jwts.parser()
                     .verifyWith(getSigningKey())
@@ -70,7 +70,6 @@ public class JWTServiceImpl implements JWTService {
             log.error("Invalid JWT token: {}", e.getMessage());
             throw new RuntimeException("Invalid JWT token", e);
         }
-
     }
 
     @Override
@@ -87,10 +86,5 @@ public class JWTServiceImpl implements JWTService {
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
 
 }
