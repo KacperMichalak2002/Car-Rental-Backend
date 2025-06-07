@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserRequest {
-    private String username;
+    private String email;
 
     private String password;
 
-    private String role = "USER";
+    private String role;
 }

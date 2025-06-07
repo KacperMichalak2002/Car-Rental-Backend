@@ -1,14 +1,12 @@
 package com.Gr3ID12A.car_rental.controllers;
 
+import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/auth")
@@ -24,11 +22,42 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<String> login(@RequestBody UserRequest userRequest){
+    public ResponseEntity<AuthResponse> login(@RequestBody UserRequest userRequest){
 
-        String verified = authenticationService.verify(userRequest);
+        String token = authenticationService.verify(userRequest);
 
-        return new ResponseEntity<>(verified, HttpStatus.OK);
+        if(token.equals("Invalid username or password") || token.equals("Failed")){
+            return new ResponseEntity<>(new AuthResponse(
+                    "Login failed",null
+            )
+            , HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<>(new AuthResponse(
+                "Login successful",
+                token
+        ),HttpStatus.OK);
+    }
+
+    @GetMapping("/oauth-success")
+    public ResponseEntity<AuthResponse> oauthSuccess(
+            @RequestParam String token,
+            @RequestParam(required = false) String error
+    ) {
+        if (error != null) {
+            return new ResponseEntity<>(new AuthResponse(
+                    "OAuth2 login failed",null
+            ),HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new AuthResponse(
+                "OAuth2 login success",token
+        ),HttpStatus.OK);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<String> loginForm() {
+        return ResponseEntity.ok("Custom login page placeholder");
     }
 
 }
