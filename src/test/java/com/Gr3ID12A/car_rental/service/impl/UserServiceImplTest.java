@@ -33,7 +33,10 @@ public class UserServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // Poprawne logowanie
+    /**
+     * Test jednostkowy metody verify().
+     * Sprawdza, czy poprawne dane logowania powodują wygenerowanie tokena JWT.
+     */
     @Test
     void shouldReturnTokenWhenAuthenticationIsSuccessful() {
         UserRequest userRequest = new UserRequest();
@@ -50,7 +53,10 @@ public class UserServiceImplTest {
         assertEquals("mocked-token", result);
     }
 
-    //  Nieudane logowanie
+    /**
+     * Test jednostkowy metody verify().
+     * Sprawdza, czy nieprawidłowe dane logowania zwracają komunikat "Failed".
+     */
     @Test
     void shouldReturnFailedWhenAuthenticationFails() {
         UserRequest userRequest = new UserRequest();
@@ -66,7 +72,10 @@ public class UserServiceImplTest {
         assertEquals("Failed", result);
     }
 
-    //  Udana rejestracja
+    /**
+     * Test jednostkowy metody registerUser().
+     * Sprawdza, czy nowy użytkownik jest rejestrowany, gdy login nie jest zajęty.
+     */
     @Test
     void shouldRegisterUserSuccessfully() {
         UserRequest request = new UserRequest();
@@ -85,7 +94,10 @@ public class UserServiceImplTest {
         verify(userRepository).save(userEntity);
     }
 
-    //  Nieudana rejestracja – login zajęty
+    /**
+     * Test jednostkowy metody registerUser().
+     * Sprawdza, czy rejestracja użytkownika kończy się błędem, jeśli login jest już zajęty.
+     */
     @Test
     void shouldFailRegistrationWhenUsernameExists() {
         UserRequest request = new UserRequest();
