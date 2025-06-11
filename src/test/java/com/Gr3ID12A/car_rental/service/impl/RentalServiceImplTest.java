@@ -109,4 +109,58 @@ public class RentalServiceImplTest {
         assertTrue(result.contains(dto2));
         verify(rentalRepository).findAllByCustomer_Id(customerId);
     }
+
+    /**
+     * Test jednostkowy metody isExist().
+     * Sprawdza, czy metoda poprawnie zwraca true, gdy wypożyczenie istnieje.
+     */
+    @Test
+    void shouldReturnTrueWhenRentalExists() {
+        // given
+        UUID rentalId = UUID.randomUUID();
+        when(rentalRepository.existsById(rentalId)).thenReturn(true);
+
+        // when
+        boolean result = rentalService.isExist(rentalId);
+
+        // then
+        assertTrue(result);
+        verify(rentalRepository).existsById(rentalId);
+    }
+
+
+    /**
+     * Test jednostkowy metody isExist().
+     * Sprawdza, czy metoda poprawnie zwraca false, gdy wypożyczenie nie istnieje.
+     */
+    @Test
+    void shouldReturnFalseWhenRentalDoesNotExist() {
+        // given
+        UUID rentalId = UUID.randomUUID();
+        when(rentalRepository.existsById(rentalId)).thenReturn(false);
+
+        // when
+        boolean result = rentalService.isExist(rentalId);
+
+        // then
+        assertFalse(result);
+        verify(rentalRepository).existsById(rentalId);
+    }
+
+    /**
+     * Test jednostkowy metody delete().
+     * Sprawdza, czy metoda poprawnie wywołuje usunięcie wypożyczenia po jego ID.
+     */
+    @Test
+    void shouldDeleteRentalById() {
+        // given
+        UUID rentalId = UUID.randomUUID();
+
+        // when
+        rentalService.delete(rentalId);
+
+        // then
+        verify(rentalRepository).deleteById(rentalId);
+    }
+
 }
