@@ -163,4 +163,34 @@ public class RentalServiceImplTest {
         verify(rentalRepository).deleteById(rentalId);
     }
 
+
+    /**
+     * Test jednostkowy metody listRentals().
+     * Sprawdza, czy metoda poprawnie pobiera wszystkie wypożyczenia i mapuje je do DTO.
+     */
+    @Test
+    void shouldReturnListOfAllRentals() {
+        // given
+        RentalEntity rental1 = new RentalEntity();
+        RentalEntity rental2 = new RentalEntity();
+        List<RentalEntity> rentals = List.of(rental1, rental2);
+
+        RentalDto dto1 = new RentalDto();
+        RentalDto dto2 = new RentalDto();
+        List<RentalDto> expectedDtos = List.of(dto1, dto2);
+
+        when(rentalRepository.findAll()).thenReturn(rentals);
+        when(rentalMapper.toDto(rental1)).thenReturn(dto1);
+        when(rentalMapper.toDto(rental2)).thenReturn(dto2);
+
+        // when
+        List<RentalDto> result = rentalService.listRentals();
+
+        // then
+        assertEquals(expectedDtos.size(), result.size());
+        assertEquals(expectedDtos, result);
+        verify(rentalRepository).findAll();
+        verify(rentalMapper, times(2)).toDto(any());
+    }
+
 }
