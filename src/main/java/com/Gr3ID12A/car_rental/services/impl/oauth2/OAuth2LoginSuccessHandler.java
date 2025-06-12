@@ -29,7 +29,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
 
-    @Value("${app.oauth2.authorized-redirect-uris=http://localhost:8080/auth/oauth-success}")
+    @Value("${app.oauth2.authorized-redirect-uris=http://localhost:3000/oauth2/redirect}") // change to frontend URI where to be redirected after successful login
     private String redirectUri;
 
     @Override

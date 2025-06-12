@@ -31,13 +31,13 @@ public class SecurityConfig {
     private final LogoutHandler logoutHandler;
     private final CustomOAuth2USerService customOAuth2USerService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-
+    private final CustomCorsConfig corsConfig;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .cors(c -> c.configurationSource(corsConfig))
                 .csrf(csrf -> csrf.disable())
-
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
