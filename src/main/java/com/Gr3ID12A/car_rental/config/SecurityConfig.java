@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/api-docs/**").permitAll()
                         .requestMatchers("/addresses/**").hasAnyRole("USER","ADMIN")
-                        .requestMatchers("/makes/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/makes/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())

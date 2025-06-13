@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -29,9 +30,9 @@ public class RentalEntity {
     @JoinColumn(name = "car_id")
     private CarEntity car;
 
-    private Date date_of_rental;
+    private LocalDate date_of_rental;
 
-    private Date date_of_return;
+    private LocalDate date_of_return;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pick_up_place_id")
@@ -41,7 +42,8 @@ public class RentalEntity {
     @JoinColumn(name = "return_place_id")
     private ReturnPlaceEntity return_place;
 
-    private double total_cost;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal total_cost;
 
     private String status;
 }

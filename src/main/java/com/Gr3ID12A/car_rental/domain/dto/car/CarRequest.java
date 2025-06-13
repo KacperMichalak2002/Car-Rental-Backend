@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -21,10 +22,10 @@ public class CarRequest {
     private UUID specificationId;
 
     @NotNull
-    private Double cost;
+    private BigDecimal cost;
 
     @NotNull
-    private Double deposit;
+    private BigDecimal deposit;
 
     private String availability;
 

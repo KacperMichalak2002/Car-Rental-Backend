@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.domain.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class OpinionEntity {
 
     private String description;
 
-    private Date date_of_publishing;
+    private LocalDate date_of_publishing;
 
 
 
