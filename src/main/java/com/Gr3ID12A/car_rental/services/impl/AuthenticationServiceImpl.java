@@ -1,5 +1,7 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
+import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenResponse;
+import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.AuthProvider;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
@@ -13,7 +15,10 @@ import com.Gr3ID12A.car_rental.repositories.TokenRepository;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
 import com.Gr3ID12A.car_rental.services.JWTService;
 import com.Gr3ID12A.car_rental.services.AuthenticationService;
+import com.Gr3ID12A.car_rental.services.RefreshTokenService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -34,6 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void registerUser(UserRequest userRequest) {
@@ -56,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public String verify(UserRequest userRequest) {
+    public AuthResponse verify(UserRequest userRequest) {
         try{
             Authentication authentication =
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken
@@ -68,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 revokeAllUserTokens(user);
 
                 if(user == null){
-                    return "Failed user not found";
+                    return new AuthResponse("Failed user not found",null,null);
                 }
 
                 List<String> roles = user.getRoles().stream()
@@ -87,11 +94,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 tokenRepository.save(tokenToBeSaved);
 
-                return generatedToken;
+                String generatedRefreshToken = refreshTokenService.generateRefreshToken(userRequest.getEmail(), user);
+
+                return new AuthResponse("Success", generatedToken, generatedRefreshToken);
             }
-            return "Failed";
+            return new AuthResponse("Failed",null,null);
         }catch (Exception e){
-            return "Invalid username or password";
+            return new AuthResponse("Invalid username or password",null,null);
         }
 
     }
@@ -109,6 +118,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         });
 
         tokenRepository.saveAll(validUserTokens);
+
+    }
+
+    @Override
+    public RefreshTokenResponse handleRefreshToken(String refreshToken) {
+        try{
+            return refreshTokenService.refreshAccessToken(refreshToken);
+        }catch (EntityNotFoundException e){
+            log.error("Invalid refresh token {}",e.getMessage());
+            return  new RefreshTokenResponse("Invalid refresh token",null);
+        }catch (RuntimeException e){
+            log.error("Refresh token expired {}",e.getMessage());
+            return new RefreshTokenResponse("Refresh token expired",null);
+        }
+
 
     }
 

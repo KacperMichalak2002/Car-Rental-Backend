@@ -1,6 +1,8 @@
 package com.Gr3ID12A.car_rental.controllers;
 
+import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenRequest;
 import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
+import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
+
 
     @PostMapping(path = "/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequest userRequest){
@@ -30,35 +33,24 @@ public class AuthController {
     @PostMapping(path = "/login")
     public ResponseEntity<AuthResponse> login(@RequestBody UserRequest userRequest){
 
-        String token = authenticationService.verify(userRequest);
+        AuthResponse response = authenticationService.verify(userRequest);
 
-        if(token.equals("Invalid username or password") || token.equals("Failed")){
-            return new ResponseEntity<>(new AuthResponse(
-                    "Login failed",null
-            )
-            , HttpStatus.UNAUTHORIZED);
+        if(response.getMessage().equals("Invalid username or password") || response.getMessage().equals("Failed")){
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<>(new AuthResponse(
-                "Login successful",
-                token
-        ),HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/oauth-success")
-    public ResponseEntity<AuthResponse> oauthSuccess(
-            @RequestParam String token,
-            @RequestParam(required = false) String error
-    ) {
-        if (error != null) {
-            return new ResponseEntity<>(new AuthResponse(
-                    "OAuth2 login failed",null
-            ),HttpStatus.BAD_REQUEST);
-        }
+    @PostMapping("/refreshToken")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
 
-        return new ResponseEntity<>(new AuthResponse(
-                "OAuth2 login success",token
-        ),HttpStatus.OK);
+        RefreshTokenResponse response = authenticationService.handleRefreshToken(refreshTokenRequest.getRefreshToken());
+
+        if(response.getAuthToken() == null){
+            return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/login")
