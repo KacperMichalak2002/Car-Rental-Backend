@@ -40,9 +40,15 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        String token = jwtService.generateToken(oAuth2User.getEmail());
 
         UserEntity user = userRepository.findByEmail(oAuth2User.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getRoleName().name())
+                .toList();
+
+        String token = jwtService.generateToken(oAuth2User.getEmail(),roles);
+
 
         List<TokenEntity> validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         validTokens.forEach(t->{

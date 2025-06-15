@@ -51,8 +51,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         RoleEntity role = roleRepository.findByRoleName(RoleName.ROLE_USER).orElse(null);
         userToRegister.setRoles(Set.of(role));
 
-
-
         userRepository.save(userToRegister);
 
     }
@@ -65,7 +63,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             (userRequest.getEmail(), userRequest.getPassword()));
 
             if(authentication.isAuthenticated()){
-                String generatedToken = jwtService.generateToken(userRequest.getEmail());
                 UserEntity user = userRepository.findByEmail(userRequest.getEmail()).orElse(null);
 
                 revokeAllUserTokens(user);
@@ -73,6 +70,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 if(user == null){
                     return "Failed user not found";
                 }
+
+                List<String> roles = user.getRoles().stream()
+                        .map(role -> role.getRoleName().name())
+                        .toList();
+
+                String generatedToken = jwtService.generateToken(userRequest.getEmail(), roles);
 
                 TokenEntity tokenToBeSaved = TokenEntity.builder()
                         .user(user)

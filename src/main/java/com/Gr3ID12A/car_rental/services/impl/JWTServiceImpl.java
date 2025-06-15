@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -29,17 +30,16 @@ public class JWTServiceImpl implements JWTService {
     private long jwtExpiration;
 
     @Override
-    public String generateToken(String username) {
-
+    public String generateToken(String username, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles",roles);
 
         return Jwts.builder()
-                .claims()
-                .add(claims)
+                .claims(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .and()
+                .issuer("car-rental-app")
                 .signWith(getSigningKey())
                 .compact();
     }
