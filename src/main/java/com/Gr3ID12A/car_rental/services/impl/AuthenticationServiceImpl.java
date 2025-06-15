@@ -84,16 +84,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 String generatedToken = jwtService.generateToken(userRequest.getEmail(), roles);
 
-                TokenEntity tokenToBeSaved = TokenEntity.builder()
-                        .user(user)
-                        .token(generatedToken)
-                        .tokenType(TokenType.BEARER)
-                        .expired(false)
-                        .revoked(false)
-                        .build();
-
-                tokenRepository.save(tokenToBeSaved);
-
                 String generatedRefreshToken = refreshTokenService.generateRefreshToken(userRequest.getEmail(), user);
 
                 return new AuthResponse("Success", generatedToken, generatedRefreshToken);

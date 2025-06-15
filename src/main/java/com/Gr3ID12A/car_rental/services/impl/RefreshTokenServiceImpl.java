@@ -3,7 +3,6 @@ package com.Gr3ID12A.car_rental.services.impl;
 import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenResponse;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.RefreshTokenEntity;
-import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
 import com.Gr3ID12A.car_rental.repositories.RefreshTokenRepository;
 import com.Gr3ID12A.car_rental.repositories.TokenRepository;
@@ -23,7 +22,6 @@ import java.util.UUID;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final TokenRepository tokenRepository;
 
     private final JWTService jwtService;
 
@@ -65,16 +63,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .toList();
 
         String newAccessToken = jwtService.generateToken(user.getEmail(), roles);
-
-        TokenEntity tokenToBeSaved = TokenEntity.builder()
-                .user(user)
-                .token(newAccessToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-
-        tokenRepository.save(tokenToBeSaved);
 
         return RefreshTokenResponse.builder()
                 .message("Success")

@@ -49,25 +49,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String token = jwtService.generateToken(oAuth2User.getEmail(),roles);
 
-
-        List<TokenEntity> validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
-        validTokens.forEach(t->{
-            t.setExpired(true);
-            t.setRevoked(true);
-        });
-
-        tokenRepository.saveAll(validTokens);
-
-        TokenEntity tokenToBeSaved = TokenEntity.builder()
-                .user(user)
-                .token(token)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-
-        tokenRepository.save(tokenToBeSaved);
-
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token",token)
                 .build().toUriString();
