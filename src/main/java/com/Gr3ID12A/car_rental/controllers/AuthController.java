@@ -17,8 +17,14 @@ public class AuthController {
 
     @PostMapping(path = "/register")
     public ResponseEntity<String> registerUser(@RequestBody UserRequest userRequest){
-         authenticationService.registerUser(userRequest);
-        return new ResponseEntity<>("User registered", HttpStatus.CREATED);
+        try{
+            authenticationService.registerUser(userRequest);
+            return new ResponseEntity<>("User registered", HttpStatus.CREATED);
+        }catch (RuntimeException e){
+            return  new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }catch (Exception e){
+            return new ResponseEntity<>("Registration failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(path = "/login")
