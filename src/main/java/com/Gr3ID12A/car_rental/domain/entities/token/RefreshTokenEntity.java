@@ -24,6 +24,7 @@ public class RefreshTokenEntity {
 
     private String token;
 
+    @Enumerated(EnumType.STRING)
     private TokenType tokenType;
 
     private LocalDateTime expiresAt;
