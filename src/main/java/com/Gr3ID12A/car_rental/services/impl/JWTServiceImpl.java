@@ -1,11 +1,17 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
+import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
+import com.Gr3ID12A.car_rental.repositories.TokenRepository;
+import com.Gr3ID12A.car_rental.repositories.UserRepository;
 import com.Gr3ID12A.car_rental.services.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,12 +21,17 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class JWTServiceImpl implements JWTService {
+
+    private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     @Value("${JWT_SECRET}")
     private String secretKey;
@@ -29,17 +40,43 @@ public class JWTServiceImpl implements JWTService {
     private long jwtExpiration;
 
     @Override
-    public String generateToken(String username) {
+    public String generateToken(String username, List<String> roles) {
 
+        String newAccessToken = tokenBuilder(username, roles);
+
+        UserEntity user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<TokenEntity> validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+        validTokens.forEach(t->{
+            t.setExpired(true);
+            t.setRevoked(true);
+        });
+
+        tokenRepository.saveAll(validTokens);
+
+        TokenEntity tokenToBeSaved = TokenEntity.builder()
+                .user(user)
+                .token(newAccessToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+
+        tokenRepository.save(tokenToBeSaved);
+
+        return newAccessToken;
+    }
+
+    private String tokenBuilder(String username, List<String> roles){
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles",roles);
 
         return Jwts.builder()
-                .claims()
-                .add(claims)
+                .claims(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .and()
+                .issuer("car-rental-app")
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -51,15 +88,15 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return parseToken(token).getSubject();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
-        final Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);
+    private Date extractExpiration(String token) {
+
+        return parseToken(token).getExpiration();
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims parseToken(String token){
         try{
             return Jwts.parser()
                     .verifyWith(getSigningKey())
@@ -70,7 +107,6 @@ public class JWTServiceImpl implements JWTService {
             log.error("Invalid JWT token: {}", e.getMessage());
             throw new RuntimeException("Invalid JWT token", e);
         }
-
     }
 
     @Override
@@ -87,10 +123,5 @@ public class JWTServiceImpl implements JWTService {
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
 
 }
