@@ -1,5 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.dto.payment;
 
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,5 @@ public class PaymentRequest {
     private String title;
     private UUID rentalId;
     private BigDecimal cost;
+    private PaymentName paymentType;
 }

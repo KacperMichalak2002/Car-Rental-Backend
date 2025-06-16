@@ -86,7 +86,12 @@ public class StripePayment implements PaymentService {
     @Override
     public StripeResponse createPayment(PaymentRequest paymentRequest) {
 
+        if(paymentRequest.getPaymentType() == PaymentName.OFFLINE){
+            return createOfflinePayment(paymentRequest);
+        }
+
         Stripe.apiKey = STRIPE_API;
+
 
 
         SessionCreateParams params =
@@ -137,6 +142,29 @@ public class StripePayment implements PaymentService {
             throw new RuntimeException("Error creating checkout session in stripe", e);
         }
 
+    }
+
+    private StripeResponse createOfflinePayment(PaymentRequest paymentRequest) {
+
+        PaymentEntity paymentToSave = paymentMapper.toEntity(paymentRequest);
+
+        RentalEntity rental = new RentalEntity();
+        rental.setId(paymentRequest.getRentalId());
+        paymentToSave.setRental(rental);
+
+        PaymentTypeEntity paymentType = paymentTypeRepository.findByName(PaymentName.OFFLINE).orElse(null);
+        paymentToSave.setPayment_type(paymentType);
+
+        paymentToSave.setSessionId(null);
+        paymentToSave.setStatus(PaymentStatus.PENDING.toString());
+        paymentRepository.save(paymentToSave);
+
+        return StripeResponse.builder()
+                .status("SUCCESS")
+                .message("Offline payment created")
+                .sessionId(null)
+                .sessionUrl(null)
+                .build();
     }
 
 
