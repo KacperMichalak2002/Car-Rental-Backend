@@ -45,9 +45,8 @@ public class PaymentController {
     public ResponseEntity<StripeResponse> createPayment(@RequestBody PaymentRequest paymentRequest ){
 
         boolean rentalExist = rentalService.isExist(paymentRequest.getRentalId());
-        boolean paymentTypeExist = paymentTypeService.isExist(paymentRequest.getPaymentTypeId());
 
-       if(!rentalExist || !paymentTypeExist){
+       if(!rentalExist){
            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
        }
 
@@ -73,6 +72,16 @@ public class PaymentController {
             log.error("Error processing Stripe webhook {}", e.getMessage());
             return new ResponseEntity<>("Webhook processing failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/{id}/confirm-offline")
+    public ResponseEntity<PaymentDto> confirmOfflinePayment(@PathVariable UUID id){
+        if(!paymentService.isExist(id)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        PaymentDto updatedPayment = paymentService.confirmOfflinePayment(id);
+        return new ResponseEntity<>(updatedPayment, HttpStatus.OK);
     }
 
     @PatchMapping(path = "/{id}/status")

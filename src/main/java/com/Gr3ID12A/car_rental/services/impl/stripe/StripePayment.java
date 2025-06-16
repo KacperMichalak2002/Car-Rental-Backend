@@ -5,10 +5,12 @@ import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
 import com.Gr3ID12A.car_rental.domain.dto.payment.stripe.StripeResponse;
 import com.Gr3ID12A.car_rental.domain.entities.PaymentEntity;
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import com.Gr3ID12A.car_rental.domain.entities.RentalEntity;
 import com.Gr3ID12A.car_rental.mappers.PaymentMapper;
 import com.Gr3ID12A.car_rental.repositories.PaymentRepository;
+import com.Gr3ID12A.car_rental.repositories.PaymentTypeRepository;
 import com.Gr3ID12A.car_rental.services.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -37,6 +39,7 @@ import java.util.UUID;
 public class StripePayment implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final PaymentRepository paymentRepository;
+    private final PaymentTypeRepository paymentTypeRepository;
 
 
     @Value("${STRIPE_SECRET}")
@@ -91,6 +94,8 @@ public class StripePayment implements PaymentService {
                         .setMode(SessionCreateParams.Mode.PAYMENT)
                         .setSuccessUrl(Domain + "success") // set forwarding after success and cancel
                         .setCancelUrl(Domain + "cancel")
+                        .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                        .addPaymentMethodType(SessionCreateParams.PaymentMethodType.BLIK)
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setQuantity(1L)
@@ -107,8 +112,7 @@ public class StripePayment implements PaymentService {
             rental.setId(paymentRequest.getRentalId());
             paymentToSave.setRental(rental);
 
-            PaymentTypeEntity paymentType = new PaymentTypeEntity();
-            paymentType.setId(paymentRequest.getPaymentTypeId());
+            PaymentTypeEntity paymentType = paymentTypeRepository.findByName(PaymentName.ONLINE).orElse(null);
             paymentToSave.setPayment_type(paymentType);
 
             paymentToSave.setSessionId(session.getId());
@@ -167,24 +171,16 @@ public class StripePayment implements PaymentService {
         try{
             Event event = Webhook.constructEvent(payload,sigHeader,WEBHOOK_KEY);
 
-            Session session = (Session) event.getDataObjectDeserializer().getObject().get();
-            String sessionId = session.getId();
-            PaymentEntity payment = paymentRepository.findBySessionId(sessionId).orElseThrow(() -> new RuntimeException("payment not found"));
-
             switch (event.getType()){
                 case "checkout.session.completed":
                 case "checkout.session.async_payment_succeeded":
                 case "payment_intent.succeeded":
-                    payment.setStatus(PaymentStatus.COMPLETED.toString());
-                    payment.setDate_of_payment(LocalDate.now());
-                    paymentRepository.save(payment);
+                    handlePaymentSuccess(event);
                     return "Completed";
 
                 case "checkout.session.expired":
                 case "payment_intent.payment_failed":
-                    payment.setStatus(PaymentStatus.FAILED.toString());
-                    payment.setDate_of_payment(LocalDate.now());
-                    paymentRepository.save(payment);
+                    handlePaymentFailed(event);
                     return "Failed";
 
                 default:
@@ -197,5 +193,42 @@ public class StripePayment implements PaymentService {
             return "Webhook error";
         }
 
+    }
+
+    private void handlePaymentSuccess(Event event){
+        Session session = (Session) event.getDataObjectDeserializer().getObject().get();
+        String sessionId = session.getId();
+
+        PaymentEntity payment = paymentRepository.findBySessionId(sessionId).orElseThrow(() -> new RuntimeException("payment not found"));
+        payment.setStatus(PaymentStatus.COMPLETED.toString());
+        payment.setDate_of_payment(LocalDate.now());
+
+        paymentRepository.save(payment);
+    }
+
+    private void handlePaymentFailed(Event event){
+        Session session = (Session) event.getDataObjectDeserializer().getObject().get();
+        String sessionId = session.getId();
+
+        PaymentEntity payment = paymentRepository.findBySessionId(sessionId).orElseThrow(() -> new RuntimeException("payment not found"));
+        payment.setStatus(PaymentStatus.FAILED.toString());
+        payment.setDate_of_payment(LocalDate.now());
+
+        paymentRepository.save(payment);
+
+    }
+
+    @Override
+    public PaymentDto confirmOfflinePayment(UUID id) {
+        PaymentEntity payment = paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Payment not found"));
+
+        payment.setStatus(PaymentStatus.COMPLETED.name());
+
+        PaymentTypeEntity paymentType = paymentTypeRepository.findByName(PaymentName.OFFLINE).orElse(null);
+        payment.setPayment_type(paymentType);
+        payment.setDate_of_payment(LocalDate.now());
+        paymentRepository.save(payment);
+
+        return paymentMapper.toDto(payment);
     }
 }

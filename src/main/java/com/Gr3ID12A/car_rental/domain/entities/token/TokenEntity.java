@@ -21,6 +21,7 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(length = 512)
     private String token;
 
     @Enumerated(EnumType.STRING)

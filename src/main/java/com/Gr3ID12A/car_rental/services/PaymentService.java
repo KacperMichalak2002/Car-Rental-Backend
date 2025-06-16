@@ -19,4 +19,6 @@ public interface PaymentService {
     PaymentDto partialUpdatePayment(UUID id, PaymentRequest paymentRequest);
 
     String handleWebhook(String payload, String sigHeader);
+
+    PaymentDto confirmOfflinePayment(UUID id);
 }
