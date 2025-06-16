@@ -2,16 +2,14 @@ package com.Gr3ID12A.car_rental.services.impl.oauth2;
 
 import com.Gr3ID12A.car_rental.domain.dto.user.CustomOAuth2User;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
-import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
-import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
-import com.Gr3ID12A.car_rental.repositories.TokenRepository;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
 import com.Gr3ID12A.car_rental.services.JWTService;
+import com.Gr3ID12A.car_rental.services.RefreshTokenService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -26,8 +24,15 @@ import java.util.List;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTService jwtService;
+    private final RefreshTokenService refreshTokenService;
+
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
+
+    @Value("${JWT_EXPIRATION}")
+    private long jwtExpiration;
+
+    @Value("${REFRESH_TOKEN_EXPIRATION}")
+    private long refreshTokenExpiration;
 
     @Value("${app.oauth2.authorized-redirect-uris=http://localhost:3000/oauth2/redirect}") // change to frontend URI where to be redirected after successful login
     private String redirectUri;
@@ -40,34 +45,34 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         }
 
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        String token = jwtService.generateToken(oAuth2User.getEmail());
 
         UserEntity user = userRepository.findByEmail(oAuth2User.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<TokenEntity> validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
-        validTokens.forEach(t->{
-            t.setExpired(true);
-            t.setRevoked(true);
-        });
+        List<String> roles = user.getRoles().stream()
+                .map(role -> role.getRoleName().name())
+                .toList();
 
-        tokenRepository.saveAll(validTokens);
+        String authToken = jwtService.generateToken(oAuth2User.getEmail(),roles);
 
-        TokenEntity tokenToBeSaved = TokenEntity.builder()
-                .user(user)
-                .token(token)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
+        String refreshToken = refreshTokenService.generateRefreshToken(oAuth2User.getEmail(), user);
 
-        tokenRepository.save(tokenToBeSaved);
+        Cookie authCookie = new Cookie("authToken", authToken);
+        authCookie.setHttpOnly(true);
+        authCookie.setSecure(true);
+        authCookie.setPath("/");
+        authCookie.setMaxAge((int) jwtExpiration / 1000); // Zamiana na sekundy
+        response.addCookie(authCookie);
 
-        String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
-                .queryParam("token",token)
-                .build().toUriString();
+        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge((int) refreshTokenExpiration);
+        response.addCookie(refreshCookie);
+
 
         clearAuthenticationAttributes(request);
-        getRedirectStrategy().sendRedirect(request,response,targetUrl);
+        getRedirectStrategy().sendRedirect(request,response,redirectUri);
     }
 
 }

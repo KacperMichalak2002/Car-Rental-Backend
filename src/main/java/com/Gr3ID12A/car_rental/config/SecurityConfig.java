@@ -32,6 +32,7 @@ public class SecurityConfig {
     private final CustomOAuth2USerService customOAuth2USerService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final CustomCorsConfig corsConfig;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -52,7 +53,8 @@ public class SecurityConfig {
                         .requestMatchers("/makes/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2USerService)
