@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/api-docs/**").permitAll()
+                        .requestMatchers("/payments/webhook/**").permitAll()
                         .requestMatchers("/addresses/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers("/makes/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()

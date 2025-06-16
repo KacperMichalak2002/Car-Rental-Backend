@@ -1,5 +1,6 @@
 package com.Gr3ID12A.car_rental.domain.entities;
 
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
