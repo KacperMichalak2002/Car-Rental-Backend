@@ -20,7 +20,6 @@ public class CustomerDto {
     private UUID id;
     private UserDto user;
     private PersonalDataDto personalData;
-    private Set<UUID> discountsIds;
     private LocalDate date_of_joining;
     private int loyalty_points;
 }

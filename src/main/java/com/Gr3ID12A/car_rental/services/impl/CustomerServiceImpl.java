@@ -3,7 +3,6 @@ package com.Gr3ID12A.car_rental.services.impl;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
-import com.Gr3ID12A.car_rental.domain.entities.DiscountEntity;
 import com.Gr3ID12A.car_rental.domain.entities.PersonalDataEntity;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.mappers.CustomerMapper;
@@ -16,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,17 +54,6 @@ public class CustomerServiceImpl implements CustomerService {
         personalData.setId(customerRequest.getPersonalDataId());
         customerToSave.setPersonalData(personalData);
 
-        Set<DiscountEntity> dicsounts = customerRequest.getDiscountsIds()
-                        .stream().map(discount ->{
-                            DiscountEntity newDiscount = new DiscountEntity();
-                            newDiscount.setId(discount);
-                            return newDiscount;
-                }).collect(Collectors.toSet());
-
-        customerToSave.setDiscounts(dicsounts);
-
-
-
         CustomerEntity savedCustomer = customerRepository.save(customerToSave);
         return customerMapper.toDto(savedCustomer);
     }
@@ -83,7 +69,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerEntity updatedCustomer = customerRepository.findById(id).map(existingCustomer -> {
             Optional.ofNullable(customerToUpdate.getPersonalData()).ifPresent(existingCustomer::setPersonalData);
-            Optional.ofNullable(customerToUpdate.getDiscounts()).ifPresent(existingCustomer::setDiscounts);
             Optional.ofNullable(customerToUpdate.getLoyalty_points()).ifPresent(existingCustomer::setLoyalty_points);
             return customerRepository.save(existingCustomer);
         }).orElseThrow(() -> new EntityNotFoundException("Customer doest not exsit"));

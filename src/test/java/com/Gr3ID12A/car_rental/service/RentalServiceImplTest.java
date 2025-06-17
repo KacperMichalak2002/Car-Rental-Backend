@@ -1,4 +1,4 @@
-package com.Gr3ID12A.car_rental.services.impl;
+package com.Gr3ID12A.car_rental.service;
 
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
@@ -7,6 +7,7 @@ import com.Gr3ID12A.car_rental.mappers.RentalMapper;
 import com.Gr3ID12A.car_rental.repositories.RentalRepository;
 import com.Gr3ID12A.car_rental.services.*;
 
+import com.Gr3ID12A.car_rental.services.impl.RentalServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
