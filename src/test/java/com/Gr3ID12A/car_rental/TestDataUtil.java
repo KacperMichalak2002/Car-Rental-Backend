@@ -401,7 +401,7 @@ public final class TestDataUtil {
                 .title("Test payment")
                 .rentalId(createRentalEntity().getId())
                 .cost(BigDecimal.valueOf(1500.00))
-                .paymentType(PaymentName.ONLINE)
+                .paymentType(PaymentName.OFFLINE)
                 .build();
     }
 
