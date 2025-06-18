@@ -56,23 +56,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String refreshToken = refreshTokenService.generateRefreshToken(oAuth2User.getEmail(), user);
 
-        Cookie authCookie = new Cookie("authToken", authToken);
-        authCookie.setHttpOnly(true);
-        authCookie.setSecure(true);
-        authCookie.setPath("/");
-        authCookie.setMaxAge((int) jwtExpiration / 1000); // Zamiana na sekundy
-        response.addCookie(authCookie);
-
-        Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge((int) refreshTokenExpiration);
-        response.addCookie(refreshCookie);
-
+        String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
+                .queryParam("token", authToken)
+                .queryParam("refreshToken", refreshToken)
+                .build()
+                .toUriString();
 
         clearAuthenticationAttributes(request);
-        getRedirectStrategy().sendRedirect(request,response,redirectUri);
+        getRedirectStrategy().sendRedirect(request,response,targetUrl);
     }
 
 }
