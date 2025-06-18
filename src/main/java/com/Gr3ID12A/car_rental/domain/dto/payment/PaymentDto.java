@@ -7,7 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -16,9 +17,11 @@ import java.util.UUID;
 @Builder
 public class PaymentDto {
     private UUID id;
+    private String title;
+    private String sessionId;
     private RentalDto rental;
     private PaymentTypeDto payment_type;
-    private double cost;
-    private Date date_of_payment;
+    private BigDecimal cost;
+    private LocalDate date_of_payment;
     private String status;
 }

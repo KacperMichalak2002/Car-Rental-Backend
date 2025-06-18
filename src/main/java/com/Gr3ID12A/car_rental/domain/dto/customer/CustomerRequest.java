@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +24,6 @@ public class CustomerRequest {
 
     private Set<UUID> discountsIds;
 
-    private Date date_of_joining;
+    private LocalDate date_of_joining;
     private int loyalty_points;
 }

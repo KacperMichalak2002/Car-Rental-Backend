@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,14 +33,7 @@ public class CustomerEntity {
     @JoinColumn(name = "personal_data_id")
     private PersonalDataEntity personalData;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "customer_discounts",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "discount_id"))
-    private Set<DiscountEntity> discounts = new HashSet<>();
-
-    private Date date_of_joining;
+    private LocalDate date_of_joining;
 
     private int loyalty_points;
 

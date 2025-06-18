@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.domain.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -21,7 +22,8 @@ public class InsuranceEntity {
 
     private String insurance_type;
 
-    private double cost;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal cost;
 
     private String range_of_insurance;
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -24,4 +25,6 @@ public class OpinionRequest {
     private int rating;
 
     private String description;
+
+    private LocalDate date_of_publishing;
 }

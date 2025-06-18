@@ -3,7 +3,10 @@ package com.Gr3ID12A.car_rental.domain.entities;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +14,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class UserEntity {

@@ -2,7 +2,7 @@ package com.Gr3ID12A.car_rental.mappers;
 
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeRequest;
-import com.Gr3ID12A.car_rental.domain.entities.PaymentTypeEntity;
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

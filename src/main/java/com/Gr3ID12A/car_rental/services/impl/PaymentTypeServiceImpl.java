@@ -2,7 +2,7 @@ package com.Gr3ID12A.car_rental.services.impl;
 
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeRequest;
-import com.Gr3ID12A.car_rental.domain.entities.PaymentTypeEntity;
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import com.Gr3ID12A.car_rental.mappers.PaymentTypeMapper;
 import com.Gr3ID12A.car_rental.repositories.PaymentTypeRepository;
 import com.Gr3ID12A.car_rental.services.PaymentTypeService;

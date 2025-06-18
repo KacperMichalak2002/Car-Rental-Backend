@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -20,5 +20,5 @@ public class OpinionDto {
     private CarDto car;
     private int rating;
     private String description;
-    private Date date_of_publishing;
+    private LocalDate date_of_publishing;
 }

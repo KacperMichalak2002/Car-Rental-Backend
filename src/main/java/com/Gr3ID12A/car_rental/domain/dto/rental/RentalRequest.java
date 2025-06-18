@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -15,10 +16,10 @@ import java.util.UUID;
 public class RentalRequest {
     private UUID customerId;
     private UUID carId;
-    private Date date_of_rental;
-    private Date date_of_return;
+    private LocalDate date_of_rental;
+    private LocalDate date_of_return;
     private UUID pick_up_placeId;
     private UUID return_placeId;
-    private double total_cost;
+    private BigDecimal total_cost;
     private String status;
 }

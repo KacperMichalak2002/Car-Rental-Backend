@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -17,8 +18,8 @@ public class CarDto {
     private UUID id;
     private ModelDto model;
     private SpecificationDto specification;
-    private double cost;
-    private double deposit;
+    private BigDecimal cost;
+    private BigDecimal deposit;
     private String availability;
     private String image_url;
     private String description;

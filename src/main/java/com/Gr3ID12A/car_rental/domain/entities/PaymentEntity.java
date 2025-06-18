@@ -1,12 +1,14 @@
 package com.Gr3ID12A.car_rental.domain.entities;
 
+import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -21,6 +23,10 @@ public class PaymentEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String title;
+
+    private String sessionId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rental_id")
     private RentalEntity rental;
@@ -29,9 +35,9 @@ public class PaymentEntity {
     @JoinColumn(name = "payment_type_id")
     private PaymentTypeEntity payment_type;
 
-    private double cost;
+    private BigDecimal cost;
 
-    private Date date_of_payment;
+    private LocalDate date_of_payment;
 
     private String status;
 }
