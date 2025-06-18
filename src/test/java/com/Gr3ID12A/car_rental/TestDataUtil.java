@@ -22,6 +22,10 @@ import com.Gr3ID12A.car_rental.domain.dto.user.UserDto;
 import com.Gr3ID12A.car_rental.domain.entities.*;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
+import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
+import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
+import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -405,6 +409,18 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static UserRequest createTestUserRequest() {
+        UserRequest request = new UserRequest();
+        request.setEmail("test@mail.com");
+        request.setPassword("password");
+        return request;
+    }
+
+    public static RoleEntity createTestUserRole() {
+        RoleEntity role = new RoleEntity();
+        role.setRoleName(RoleName.ROLE_USER);
+        return role;
+    }
 
 
 
