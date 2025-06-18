@@ -34,7 +34,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Value("${REFRESH_TOKEN_EXPIRATION}")
     private long refreshTokenExpiration;
 
-    @Value("${app.oauth2.authorized-redirect-uris=http://localhost:3000/oauth2/redirect}") // change to frontend URI where to be redirected after successful login
+    @Value("${app.oauth2.authorized-redirect-uris=http://localhost:5173/oauth2/redirect}")
     private String redirectUri;
 
     @Override
