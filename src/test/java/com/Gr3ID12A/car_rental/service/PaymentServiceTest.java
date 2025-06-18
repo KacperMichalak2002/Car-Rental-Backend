@@ -12,9 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.verify;
@@ -44,11 +47,11 @@ public class PaymentServiceTest {
 
     @BeforeEach
     void setUp(){
-        paymentEntity1 = TestDataUtil.createOnlinePaymentEntity();
-        paymentEntity2 = TestDataUtil.createOfflinePaymentEntity();
+        paymentEntity1 = TestDataUtil.createTestOnlinePaymentEntity();
+        paymentEntity2 = TestDataUtil.createTestOfflinePaymentEntity();
 
-        paymentDto1 = TestDataUtil.createOnlinePaymentDto();
-        paymentDto2 = TestDataUtil.createOfflinePaymentDto();
+        paymentDto1 = TestDataUtil.createTestOnlinePaymentDto();
+        paymentDto2 = TestDataUtil.createTestOfflinePaymentDto();
     }
 
     @Test
@@ -67,6 +70,39 @@ public class PaymentServiceTest {
         assertThat(result).containsExactly(paymentDto1,paymentDto2);
 
     }
+
+    @Test
+    void testThatPaymentIsReturnedById(){
+
+        PaymentEntity payment = paymentEntity1;
+
+        when(paymentRepository.findById(payment.getId())).thenReturn(Optional.of(payment));
+        when(paymentMapper.toDto(paymentEntity1)).thenReturn(paymentDto1);
+
+        PaymentDto result = stripePayment.getPaymentById(payment.getId());
+
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo(paymentDto1);
+    }
+
+    @Test
+    void testThatPaymentIsNotFound(){
+        UUID id = UUID.randomUUID();
+
+        when(paymentRepository.findById(id)).thenReturn(Optional.empty());
+
+        PaymentDto result = stripePayment.getPaymentById(id);
+
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void testThatPartialUpdateIsSuccessful(){
+        PaymentEntity payment = paymentEntity1;
+    }
+
+
+
 
 
 }

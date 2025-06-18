@@ -9,6 +9,7 @@ import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
+import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataDto;
@@ -28,43 +29,43 @@ import java.util.UUID;
 
 public final class TestDataUtil {
 
-    public static MakeEntity createMakeEntity(){
+    public static MakeEntity createTestMakeEntity(){
         return MakeEntity.builder()
                 .name("Volkswagen")
                 .build();
     }
 
-    public static MakeDto createMakeDto(){
+    public static MakeDto createTestMakeDto(){
         return MakeDto.builder()
                 .name("Volkswagen")
                 .build();
     }
 
 
-    public static BodyTypeEntity createBodyTypeEntity(){
+    public static BodyTypeEntity createTestBodyTypeEntity(){
         return BodyTypeEntity.builder()
                 .name("Minivan")
                 .build();
     }
 
-    public static BodyTypeDto createBodyTypeDto(){
+    public static BodyTypeDto createTestBodyTypeDto(){
         return BodyTypeDto.builder()
                 .name("Minivan")
                 .build();
     }
 
-    public static ModelEntity createModelEntityA(){
+    public static ModelEntity createTestModelEntityA(){
         return ModelEntity.builder()
-                .make(createMakeEntity())
-                .bodyType(createBodyTypeEntity())
+                .make(createTestMakeEntity())
+                .bodyType(createTestBodyTypeEntity())
                 .name("Touran")
                 .build();
     }
 
-    public static ModelDto createModelDto(){
+    public static ModelDto createTestModelDto(){
         return ModelDto.builder()
-                .make(createMakeDto())
-                .bodyType(createBodyTypeDto())
+                .make(createTestMakeDto())
+                .bodyType(createTestBodyTypeDto())
                 .name("Touran")
                 .build();
     }
@@ -127,7 +128,7 @@ public final class TestDataUtil {
                 .cost(BigDecimal.valueOf(250.00))
                 .description("Description")
                 .image_url("/test/images/img.png")
-                .model(createModelEntityA())
+                .model(createTestModelEntityA())
                 .specification(createTestSpecificationEntity())
                 .build();
 
@@ -139,7 +140,7 @@ public final class TestDataUtil {
                 .cost(BigDecimal.valueOf(250.00))
                 .description("Description")
                 .image_url("/test/images/img.png")
-                .model(createModelDto())
+                .model(createTestModelDto())
                 .specification(createTestSpecificationDto())
                 .build();
     }
@@ -308,34 +309,34 @@ public final class TestDataUtil {
 
 
 
-    public static PaymentTypeEntity createOnlinePaymentType(){
+    public static PaymentTypeEntity createTestOnlinePaymentType(){
         return PaymentTypeEntity.builder()
                 .id(UUID.randomUUID())
                 .name(PaymentName.ONLINE)
                 .build();
     }
 
-    public static PaymentTypeDto createOnlinePaymentTypeDto(){
+    public static PaymentTypeDto createTestOnlinePaymentTypeDto(){
         return PaymentTypeDto.builder()
                 .name(PaymentName.ONLINE.name())
                 .build();
     }
 
-    public static PaymentTypeEntity createOfflinePaymentType(){
+    public static PaymentTypeEntity createTestOfflinePaymentType(){
         return PaymentTypeEntity.builder()
                 .id(UUID.randomUUID())
                 .name(PaymentName.OFFLINE)
                 .build();
     }
 
-    public static PaymentTypeDto createOfflinePaymentTypeDto(){
+    public static PaymentTypeDto createTestOfflinePaymentTypeDto(){
         return PaymentTypeDto.builder()
                 .name(PaymentName.OFFLINE.name())
                 .build();
     }
 
 
-    public static PaymentEntity createOnlinePaymentEntity(){
+    public static PaymentEntity createTestOnlinePaymentEntity(){
         return PaymentEntity.builder()
                 .id(UUID.randomUUID())
                 .title("Payment online")
@@ -343,24 +344,24 @@ public final class TestDataUtil {
                 .status(PaymentStatus.COMPLETED.name())
                 .sessionId("cs_test_session")
                 .date_of_payment(LocalDate.now())
-                .payment_type(createOnlinePaymentType())
+                .payment_type(createTestOnlinePaymentType())
                 .rental(createRentalEntity())
                 .build();
     }
 
-    public static PaymentDto createOnlinePaymentDto(){
+    public static PaymentDto createTestOnlinePaymentDto(){
         return PaymentDto.builder()
                 .title("Payment online")
                 .cost(BigDecimal.valueOf(1000.00))
                 .status(PaymentStatus.COMPLETED.name())
                 .sessionId("cs_test_session")
                 .date_of_payment(LocalDate.now())
-                .payment_type(createOnlinePaymentTypeDto())
+                .payment_type(createTestOnlinePaymentTypeDto())
                 .rental(createTestRentalDto())
                 .build();
     }
 
-    public static PaymentEntity createOfflinePaymentEntity(){
+    public static PaymentEntity createTestOfflinePaymentEntity(){
         return PaymentEntity.builder()
                 .id(UUID.randomUUID())
                 .title("Payment offline")
@@ -368,12 +369,12 @@ public final class TestDataUtil {
                 .status(PaymentStatus.COMPLETED.name())
                 .sessionId("")
                 .date_of_payment(LocalDate.now())
-                .payment_type(createOfflinePaymentType())
+                .payment_type(createTestOfflinePaymentType())
                 .rental(createRentalEntity())
                 .build();
     }
 
-    public static PaymentDto createOfflinePaymentDto(){
+    public static PaymentDto createTestOfflinePaymentDto(){
         return PaymentDto.builder()
                 .title("Payment online")
                 .title("Payment offline")
@@ -381,8 +382,26 @@ public final class TestDataUtil {
                 .status(PaymentStatus.COMPLETED.name())
                 .sessionId("")
                 .date_of_payment(LocalDate.now())
-                .payment_type(createOfflinePaymentTypeDto())
+                .payment_type(createTestOfflinePaymentTypeDto())
                 .rental(createTestRentalDto())
+                .build();
+    }
+
+    public static PaymentRequest createTestPaymentRequestOnline(){
+        return PaymentRequest.builder()
+                .title("Test payment")
+                .rentalId(createRentalEntity().getId())
+                .cost(BigDecimal.valueOf(1500.00))
+                .paymentType(PaymentName.ONLINE)
+                .build();
+    }
+
+    public static PaymentRequest createTestPaymentRequestOffline(){
+        return PaymentRequest.builder()
+                .title("Test payment")
+                .rentalId(createRentalEntity().getId())
+                .cost(BigDecimal.valueOf(1500.00))
+                .paymentType(PaymentName.ONLINE)
                 .build();
     }
 
