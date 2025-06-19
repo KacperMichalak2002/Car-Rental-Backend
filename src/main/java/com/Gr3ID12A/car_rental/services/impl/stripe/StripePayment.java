@@ -189,7 +189,7 @@ public class StripePayment implements PaymentService {
         PaymentEntity updatedPayment = paymentRepository.findById(id).map(existingPayment ->{
             Optional.ofNullable(paymentToUpdate.getStatus()).ifPresent(existingPayment::setStatus);
             return paymentRepository.save(existingPayment);
-        }).orElseThrow(() -> new EntityNotFoundException("Payment now found"));
+        }).orElseThrow(() -> new EntityNotFoundException("Payment not found"));
 
         return paymentMapper.toDto(updatedPayment);
     }

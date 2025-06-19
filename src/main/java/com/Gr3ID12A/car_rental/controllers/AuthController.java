@@ -6,10 +6,12 @@ import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/auth")
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class AuthController {
     @PostMapping("/refreshToken")
     public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
 
+        log.info("Called for refresh token");
         RefreshTokenResponse response = authenticationService.handleRefreshToken(refreshTokenRequest.getRefreshToken());
 
         if(response.getAuthToken() == null){
@@ -53,9 +56,5 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<String> loginForm() {
-        return ResponseEntity.ok("Custom login page placeholder");
-    }
 
 }

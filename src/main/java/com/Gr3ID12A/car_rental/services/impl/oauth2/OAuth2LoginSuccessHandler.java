@@ -3,10 +3,10 @@ package com.Gr3ID12A.car_rental.services.impl.oauth2;
 import com.Gr3ID12A.car_rental.domain.dto.user.CustomOAuth2User;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
+import com.Gr3ID12A.car_rental.services.CustomerService;
 import com.Gr3ID12A.car_rental.services.JWTService;
 import com.Gr3ID12A.car_rental.services.RefreshTokenService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JWTService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final CustomerService customerService;
 
     private final UserRepository userRepository;
 
@@ -56,9 +57,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String refreshToken = refreshTokenService.generateRefreshToken(oAuth2User.getEmail(), user);
 
+        String customerId = customerService.getCustomerByUserId(user.getId()).getId().toString();
+
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", authToken)
                 .queryParam("refreshToken", refreshToken)
+                .queryParam("customerId", customerId)
                 .build()
                 .toUriString();
 

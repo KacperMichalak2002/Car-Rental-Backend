@@ -1,21 +1,15 @@
 package com.Gr3ID12A.car_rental.services.impl;
 
+
 import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
-import com.Gr3ID12A.car_rental.domain.entities.AuthProvider;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
-import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
-import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
-import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
-import com.Gr3ID12A.car_rental.mappers.UserMapper;
-import com.Gr3ID12A.car_rental.repositories.RoleRepository;
 import com.Gr3ID12A.car_rental.repositories.TokenRepository;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
-import com.Gr3ID12A.car_rental.services.JWTService;
-import com.Gr3ID12A.car_rental.services.AuthenticationService;
-import com.Gr3ID12A.car_rental.services.RefreshTokenService;
+import com.Gr3ID12A.car_rental.services.*;
+import com.Gr3ID12A.car_rental.services.UsersService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Set;
+
 
 @Slf4j
 @Service
@@ -34,13 +29,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final RoleRepository roleRepository;
 
-    private final UserMapper userMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final CustomerService customerService;
+    private final UsersService usersService;
 
     @Override
     public void registerUser(UserRequest userRequest) {
@@ -51,14 +46,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         userRequest.setPassword(bCryptPasswordEncoder.encode(userRequest.getPassword()));
 
-        UserEntity userToRegister = userMapper.toEntity(userRequest);
-        userToRegister.setProvider(AuthProvider.LOCAL);
-        userToRegister.setEnabled(true);
+        String result = usersService.createUser(userRequest);
 
-        RoleEntity role = roleRepository.findByRoleName(RoleName.ROLE_USER).orElse(null);
-        userToRegister.setRoles(Set.of(role));
-
-        userRepository.save(userToRegister);
+        if(result.equals("Success")){
+            log.info("Registered new user");
+        }else{
+            log.error("User failed to be registered");
+        }
 
     }
 
@@ -75,7 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 revokeAllUserTokens(user);
 
                 if(user == null){
-                    return new AuthResponse("Failed user not found",null,null);
+                    return new AuthResponse("Failed user not found",null,null,null);
                 }
 
                 List<String> roles = user.getRoles().stream()
@@ -86,11 +80,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
                 String generatedRefreshToken = refreshTokenService.generateRefreshToken(userRequest.getEmail(), user);
 
-                return new AuthResponse("Success", generatedToken, generatedRefreshToken);
+
+                String customerId = customerService.getCustomerByUserId(user.getId()).getId().toString();
+
+                return new AuthResponse("Success", customerId, generatedToken, generatedRefreshToken);
             }
-            return new AuthResponse("Failed",null,null);
+            return new AuthResponse("Failed",null,null,null);
         }catch (Exception e){
-            return new AuthResponse("Invalid username or password",null,null);
+            return new AuthResponse("Invalid username or password",null,null,null);
         }
 
     }

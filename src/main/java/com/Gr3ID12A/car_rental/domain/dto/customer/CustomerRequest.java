@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -21,8 +20,6 @@ public class CustomerRequest {
 
     @NotNull
     private UUID personalDataId;
-
-    private Set<UUID> discountsIds;
 
     private LocalDate date_of_joining;
     private int loyalty_points;

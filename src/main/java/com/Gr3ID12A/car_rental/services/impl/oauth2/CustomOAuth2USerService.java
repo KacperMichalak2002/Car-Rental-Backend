@@ -7,6 +7,7 @@ import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.repositories.RoleRepository;
 import com.Gr3ID12A.car_rental.repositories.UserRepository;
+import com.Gr3ID12A.car_rental.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,6 +23,7 @@ import java.util.Set;
 public class CustomOAuth2USerService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UsersService usersService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
@@ -50,6 +52,7 @@ public class CustomOAuth2USerService extends DefaultOAuth2UserService {
             user.setRoles(Set.of(userRole));
 
            userRepository.save(user);
+           usersService.createEmptyCustomer(user);
         }
 
         return new CustomOAuth2User(oAuth2User,user);

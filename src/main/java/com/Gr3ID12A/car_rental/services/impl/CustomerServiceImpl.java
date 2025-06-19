@@ -42,6 +42,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
+    public CustomerDto getCustomerByUserId(UUID id) {
+        Optional<CustomerEntity> customer = customerRepository.findByUserId(id);
+        return customer.map(customerEntity -> {
+            CustomerDto customerDto = customerMapper.toDto(customerEntity);
+            return customerDto;
+        }).orElse(null);
+    }
+
+    @Override
     public CustomerDto createCustomer(CustomerRequest customerRequest) {
         CustomerEntity customerToSave = customerMapper.toEntity(customerRequest);
 
@@ -81,8 +91,5 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.deleteById(id);
     }
 
-    @Override
-    public CustomerEntity getCustomerEntityById(UUID customerId) {
-        return customerRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("Customer not found"));
-    }
+
 }
