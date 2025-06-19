@@ -36,6 +36,16 @@ import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.RefreshTokenEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
+import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
+import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
+import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
+import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
+import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
+
+import java.util.List;
+
 
 import java.time.LocalDateTime;
 
@@ -476,11 +486,67 @@ public final class TestDataUtil {
     }
 
     public static UserRequest createTestUserRequest() {
-        UserRequest request = new UserRequest();
-        request.setEmail("test@mail.com");
-        request.setPassword("password");
-        return request;
+        UserRequest userRequest = new UserRequest();
+        userRequest.setEmail("test@example.com");
+        userRequest.setPassword("securePassword123");
+        return userRequest;
     }
+
+    public static UserEntity createTestUserEntity() {
+        UserEntity user = new UserEntity();
+        user.setId(UUID.randomUUID());
+        user.setEmail("test@example.com");
+        user.setPassword("encodedPassword123");
+        user.setEnabled(true);
+        user.setProvider(AuthProvider.LOCAL);
+
+        RoleEntity role = new RoleEntity();
+        role.setId(UUID.randomUUID());
+        role.setRoleName(RoleName.ROLE_USER);
+
+        user.setRoles(Set.of(role));
+        return user;
+    }
+
+
+
+    public static List<TokenEntity> createTestTokenEntityList(UserEntity user) {
+        TokenEntity token1 = new TokenEntity();
+        token1.setId(UUID.randomUUID());
+        token1.setUser(user);
+        token1.setToken("token1");
+        token1.setTokenType(TokenType.BEARER);
+        token1.setExpired(false);
+        token1.setRevoked(false);
+
+        TokenEntity token2 = new TokenEntity();
+        token2.setId(UUID.randomUUID());
+        token2.setUser(user);
+        token2.setToken("token2");
+        token2.setTokenType(TokenType.BEARER);
+        token2.setExpired(false);
+        token2.setRevoked(false);
+
+        return List.of(token1, token2);
+    }
+
+
+    public static CustomerEntity createTestCustomerEntity(UUID userId) {
+        CustomerEntity customer = new CustomerEntity();
+        UserEntity user = new UserEntity();
+        user.setId(userId);
+        customer.setUser(user);
+        customer.setId(UUID.randomUUID());
+        return customer;
+    }
+
+    public static CustomerDto createTestCustomerDto(UUID id) {
+        CustomerDto dto = new CustomerDto();
+        dto.setId(id);
+        dto.setLoyalty_points(100);
+        return dto;
+    }
+
 
     public static RoleEntity createTestUserRole() {
         RoleEntity role = new RoleEntity();
