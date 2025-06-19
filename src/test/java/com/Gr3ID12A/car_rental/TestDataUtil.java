@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental;
 import com.Gr3ID12A.car_rental.domain.dto.address.AddressDto;
 import com.Gr3ID12A.car_rental.domain.dto.address.AddressRequest;
 import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeDto;
+import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
@@ -56,6 +57,10 @@ public final class TestDataUtil {
         return BodyTypeDto.builder()
                 .name("Minivan")
                 .build();
+    }
+
+    public static BodyTypeRequest createTestBodyTypeRequest() {
+        return new BodyTypeRequest("SUV");
     }
 
     public static ModelEntity createTestModelEntityA(){
