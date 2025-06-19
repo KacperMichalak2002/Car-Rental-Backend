@@ -462,6 +462,16 @@ public final class TestDataUtil {
         return role;
     }
 
+    public static UserEntity createTestUserEntityWithEmail(String email) {
+        return UserEntity.builder()
+                .id(UUID.randomUUID())
+                .email(email)
+                .enabled(true)
+                .name("Test User")
+                .password("testpassword")
+                .provider(AuthProvider.LOCAL)
+                .build();
+    }
 
 
 }
