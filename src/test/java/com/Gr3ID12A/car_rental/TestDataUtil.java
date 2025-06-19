@@ -24,6 +24,7 @@ import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
+import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationRequest;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserDto;
 import com.Gr3ID12A.car_rental.domain.entities.*;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
@@ -122,6 +123,22 @@ public final class TestDataUtil {
 
     public static SpecificationDto createTestSpecificationDto(){
         return SpecificationDto.builder()
+                .color("Blue")
+                .driveType("FWD")
+                .engineCapacity(1.6)
+                .fuelType("Diesel")
+                .gearbox("Manual")
+                .horsepower(130)
+                .mileage(320312)
+                .numberOfSeats(7)
+                .registration("EZD-QW42")
+                .vin("5TDKK3DCXCS239548")
+                .yearOfProduction(2002)
+                .build();
+    }
+
+    public static SpecificationRequest createTestSpecificationRequest() {
+        return SpecificationRequest.builder()
                 .color("Blue")
                 .driveType("FWD")
                 .engineCapacity(1.6)
