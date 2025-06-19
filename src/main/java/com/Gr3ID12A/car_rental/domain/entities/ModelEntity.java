@@ -24,7 +24,7 @@ public class ModelEntity {
     @JoinColumn(name = "make_id")
     private MakeEntity make;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bodyType_id")
     private BodyTypeEntity bodyType;
 
