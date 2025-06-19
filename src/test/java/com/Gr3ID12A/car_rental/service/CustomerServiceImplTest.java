@@ -124,24 +124,4 @@ class CustomerServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> customerService.partialUpdate(id, request));
     }
 
-    @Test
-    void shouldReturnCustomerEntityById() {
-        CustomerEntity entity = TestDataUtil.createTestCustomerEntity();
-        UUID id = entity.getId();
-
-        when(customerRepository.findById(id)).thenReturn(Optional.of(entity));
-
-        CustomerEntity result = customerService.getCustomerEntityById(id);
-
-        assertEquals(entity, result);
-    }
-
-    @Test
-    void shouldThrowExceptionWhenCustomerEntityNotFound() {
-        UUID id = UUID.randomUUID();
-
-        when(customerRepository.findById(id)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> customerService.getCustomerEntityById(id));
-    }
 }

@@ -3,6 +3,7 @@ package com.Gr3ID12A.car_rental.service;
 import com.Gr3ID12A.car_rental.TestDataUtil;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
+import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
 import com.Gr3ID12A.car_rental.domain.dto.payment.stripe.StripeResponse;
 import com.Gr3ID12A.car_rental.domain.entities.PaymentEntity;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
@@ -11,10 +12,14 @@ import com.Gr3ID12A.car_rental.mappers.PaymentMapper;
 import com.Gr3ID12A.car_rental.repositories.PaymentRepository;
 import com.Gr3ID12A.car_rental.repositories.PaymentTypeRepository;
 import com.Gr3ID12A.car_rental.services.impl.stripe.StripePayment;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
 import com.stripe.model.Price;
 import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -106,7 +112,39 @@ public class PaymentServiceTest {
 
     @Test
     void testThatPartialUpdateIsSuccessful(){
+
         PaymentEntity payment = paymentEntity1;
+        UUID id = payment.getId();
+
+        PaymentRequest paymentRequest = TestDataUtil.createTestPaymentRequestOnline();
+        PaymentDto expectedPayment = new PaymentDto();
+        expectedPayment.setId(id);
+        expectedPayment.setStatus(PaymentStatus.FAILED.name());
+
+        when(paymentMapper.toEntity(paymentRequest)).thenReturn(payment);
+        when(paymentRepository.findById(id)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toDto(payment)).thenReturn(expectedPayment);
+
+
+        PaymentDto result = stripePayment.partialUpdatePayment(id, paymentRequest);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getStatus()).isEqualTo(PaymentStatus.FAILED.name());
+        assertThat(result.getId()).isEqualTo(id);
+
+    }
+
+    @Test
+    void testThatExceptionThrownWhenPaymentNotFound(){
+        UUID id = UUID.randomUUID();
+        PaymentRequest paymentRequest = TestDataUtil.createTestPaymentRequestOnline();
+
+        when(paymentRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> stripePayment.partialUpdatePayment(id, paymentRequest))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Payment not found");
     }
 
     @Test
@@ -167,9 +205,58 @@ public class PaymentServiceTest {
         assertThat(result.getSessionUrl()).isNull();
     }
 
+    @Test
+    void testCreatingPriceId(){
+        PaymentRequest paymentRequest = TestDataUtil.createTestPaymentRequestOnline();
+        Price mockPrice = mock(Price.class);
 
+        when(mockPrice.getId()).thenReturn("price_test_id");
 
+        try(MockedStatic<Price> mockedPrice = mockStatic(Price.class)){
+            mockedPrice.when( () -> Price.create(any(PriceCreateParams.class))).thenReturn(mockPrice);
 
+            String result = stripePayment.getPriceId(paymentRequest);
 
+            assertThat(result).isNotNull();
+            assertThat(result).isEqualTo("price_test_id");
+        }
 
+    }
+
+    @Test
+    void testThatCreatingPriceIdThrowsException(){
+        PaymentRequest paymentRequest = TestDataUtil.createTestPaymentRequestOnline();
+
+        try(MockedStatic<Price> mockedPrice = mockStatic(Price.class)){
+            mockedPrice.when( () -> Price.create(any(PriceCreateParams.class)))
+                    .thenThrow(new StripeException("Stripe API error","req_123","ivalid_request",400){});
+
+            assertThatThrownBy(() -> stripePayment.getPriceId(paymentRequest))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("Error while creating stripe price")
+                    .hasCauseInstanceOf(StripeException.class);
+        }
+    }
+
+    @Test
+    void testThatIsExistReturnsTrueWhenPaymentExist(){
+        UUID id = TestDataUtil.createTestOnlinePaymentEntity().getId();
+
+        when(paymentRepository.existsById(id)).thenReturn(true);
+
+        boolean result = stripePayment.isExist(id);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testThatIsExistReturnsFalseWhenPaymentDoesNotExist(){
+        UUID id = UUID.randomUUID();
+
+        when(paymentRepository.existsById(id)).thenReturn(false);
+
+        boolean result = stripePayment.isExist(id);
+
+        assertThat(result).isFalse();
+    }
 }
