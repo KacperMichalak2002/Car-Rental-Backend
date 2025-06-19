@@ -11,6 +11,7 @@ import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
+import com.Gr3ID12A.car_rental.domain.dto.model.ModelRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
@@ -83,6 +84,14 @@ public final class TestDataUtil {
                 .bodyType(createTestBodyTypeDto())
                 .name("Touran")
                 .build();
+    }
+
+    public static ModelRequest createTestModelRequest() {
+        ModelRequest request = new ModelRequest();
+        request.setName("Touran");
+        request.setMakeId(UUID.randomUUID());
+        request.setBodyTypeId(UUID.randomUUID());
+        return request;
     }
 
     public static SpecificationEntity createTestSpecificationEntity(){
