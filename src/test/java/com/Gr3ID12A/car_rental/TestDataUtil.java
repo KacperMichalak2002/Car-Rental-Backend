@@ -7,6 +7,7 @@ import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
+import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
@@ -300,6 +301,14 @@ public final class TestDataUtil {
                 .loyalty_points(100)
                 .personalData(createTestPersonalDataDtoy())
                 .user(createTestLocalUserDto())
+                .build();
+    }
+
+    public static CustomerRequest createTestCustomerRequest() {
+        return CustomerRequest.builder()
+                .personalDataId(UUID.randomUUID())
+                .userId(UUID.randomUUID())
+                .loyalty_points(100)
                 .build();
     }
 
