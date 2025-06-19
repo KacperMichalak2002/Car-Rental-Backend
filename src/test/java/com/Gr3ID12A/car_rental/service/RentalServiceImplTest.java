@@ -47,11 +47,6 @@ public class RentalServiceImplTest {
         );
     }
 
-    /**
-     * Test jednostkowy metody createRental().
-     * Sprawdza, czy przy poprawnych danych wejściowych
-     * tworzony jest obiekt wypożyczenia i zwracany DTO.
-     */
     @Test
     void shouldCreateRentalSuccessfullyWhenDataIsValid() {
         // given
@@ -84,10 +79,6 @@ public class RentalServiceImplTest {
         verify(rentalMapper).toDto(savedEntity);
     }
 
-    /**
-     * Test jednostkowy metody listRentalsByCustomer().
-     * Sprawdza, czy dla danego ID klienta zwracana jest lista wypożyczeń.
-     */
     @Test
     void shouldReturnListOfRentalsByCustomerId() {
         // given
@@ -111,10 +102,6 @@ public class RentalServiceImplTest {
         verify(rentalRepository).findAllByCustomer_Id(customerId);
     }
 
-    /**
-     * Test jednostkowy metody isExist().
-     * Sprawdza, czy metoda poprawnie zwraca true, gdy wypożyczenie istnieje.
-     */
     @Test
     void shouldReturnTrueWhenRentalExists() {
         // given
@@ -130,10 +117,6 @@ public class RentalServiceImplTest {
     }
 
 
-    /**
-     * Test jednostkowy metody isExist().
-     * Sprawdza, czy metoda poprawnie zwraca false, gdy wypożyczenie nie istnieje.
-     */
     @Test
     void shouldReturnFalseWhenRentalDoesNotExist() {
         // given
@@ -148,10 +131,6 @@ public class RentalServiceImplTest {
         verify(rentalRepository).existsById(rentalId);
     }
 
-    /**
-     * Test jednostkowy metody delete().
-     * Sprawdza, czy metoda poprawnie wywołuje usunięcie wypożyczenia po jego ID.
-     */
     @Test
     void shouldDeleteRentalById() {
         // given
@@ -165,10 +144,6 @@ public class RentalServiceImplTest {
     }
 
 
-    /**
-     * Test jednostkowy metody listRentals().
-     * Sprawdza, czy metoda poprawnie pobiera wszystkie wypożyczenia i mapuje je do DTO.
-     */
     @Test
     void shouldReturnListOfAllRentals() {
         // given
