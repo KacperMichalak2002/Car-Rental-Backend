@@ -37,6 +37,7 @@ public class ReturnPlaceServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+
     @Test
     void shouldListReturnPlaces() {
         ReturnPlaceEntity entity = TestDataUtil.createTestReturnPlaceEntity();
