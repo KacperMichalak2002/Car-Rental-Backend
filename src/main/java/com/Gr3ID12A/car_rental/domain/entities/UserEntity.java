@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +32,7 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AuthProvider provider = AuthProvider.LOCAL;
+    private AuthProvider provider;
 
     private String providerId;
 
@@ -43,7 +42,7 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<RoleEntity> roles = new HashSet<>();
+    private Set<RoleEntity> roles;
 
     @OneToMany(mappedBy = "user")
     private List<TokenEntity> tokens;

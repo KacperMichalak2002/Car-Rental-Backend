@@ -47,7 +47,8 @@ public class PaymentController {
         boolean rentalExist = rentalService.isExist(paymentRequest.getRentalId());
 
        if(!rentalExist){
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+           return new ResponseEntity<>(new StripeResponse("Failed","Rental not found",null,null),
+                   HttpStatus.NOT_FOUND);
        }
 
         StripeResponse createdPayment = paymentService.createPayment(paymentRequest);
