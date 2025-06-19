@@ -62,6 +62,7 @@ public class PickUpPlaceServiceImplTest {
         PickUpPlaceEntity savedEntity = TestDataUtil.createTestPickUpPlaceEntity();
         PickUpPlaceDto expectedDto = TestDataUtil.createTestPickUpPlaceDto();
 
+
         when(pickUpPlaceMapper.toEntity(request)).thenReturn(entityToSave);
         when(pickUpPlaceRepository.save(entityToSave)).thenReturn(savedEntity);
         when(pickUpPlaceMapper.toDto(savedEntity)).thenReturn(expectedDto);
