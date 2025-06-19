@@ -3,11 +3,15 @@ package com.Gr3ID12A.car_rental;
 import com.Gr3ID12A.car_rental.domain.dto.address.AddressDto;
 import com.Gr3ID12A.car_rental.domain.dto.address.AddressRequest;
 import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeDto;
+import com.Gr3ID12A.car_rental.domain.dto.bodyType.BodyTypeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
+import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
+import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
+import com.Gr3ID12A.car_rental.domain.dto.model.ModelRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
@@ -15,6 +19,7 @@ import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
+import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
@@ -45,6 +50,10 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static MakeRequest createTestMakeRequest() {
+        return new MakeRequest("Volkswagen");
+    }
+
 
     public static BodyTypeEntity createTestBodyTypeEntity(){
         return BodyTypeEntity.builder()
@@ -56,6 +65,10 @@ public final class TestDataUtil {
         return BodyTypeDto.builder()
                 .name("Minivan")
                 .build();
+    }
+
+    public static BodyTypeRequest createTestBodyTypeRequest() {
+        return new BodyTypeRequest("SUV");
     }
 
     public static ModelEntity createTestModelEntityA(){
@@ -72,6 +85,14 @@ public final class TestDataUtil {
                 .bodyType(createTestBodyTypeDto())
                 .name("Touran")
                 .build();
+    }
+
+    public static ModelRequest createTestModelRequest() {
+        ModelRequest request = new ModelRequest();
+        request.setName("Touran");
+        request.setMakeId(UUID.randomUUID());
+        request.setBodyTypeId(UUID.randomUUID());
+        return request;
     }
 
     public static SpecificationEntity createTestSpecificationEntity(){
@@ -146,6 +167,18 @@ public final class TestDataUtil {
                 .image_url("/test/images/img.png")
                 .model(createTestModelDto())
                 .specification(createTestSpecificationDto())
+                .build();
+    }
+
+    public static CarRequest createTestCarRequest() {
+        return CarRequest.builder()
+                .availability("Available")
+                .cost(BigDecimal.valueOf(250.00))
+                .deposit(BigDecimal.valueOf(100.00))
+                .description("Description")
+                .image_url("/test/images/img.png")
+                .modelId(UUID.randomUUID())
+                .specificationId(UUID.randomUUID())
                 .build();
     }
 
@@ -286,6 +319,14 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static CustomerRequest createTestCustomerRequest() {
+        return CustomerRequest.builder()
+                .personalDataId(UUID.randomUUID())
+                .userId(UUID.randomUUID())
+                .loyalty_points(100)
+                .build();
+    }
+
     public static RentalEntity createRentalEntity(){
         return RentalEntity.builder()
                 .id(UUID.randomUUID())
@@ -422,6 +463,24 @@ public final class TestDataUtil {
         return role;
     }
 
+    public static UserEntity createTestUserEntityWithEmail(String email) {
+        return UserEntity.builder()
+                .id(UUID.randomUUID())
+                .email(email)
+                .enabled(true)
+                .name("Test User")
+                .password("testpassword")
+                .provider(AuthProvider.LOCAL)
+                .build();
+    }
 
+    public static OpinionRequest createTestOpinionRequest() {
+        return OpinionRequest.builder()
+                .rating(5)
+                .description("Great car!")
+                .customerId(UUID.randomUUID())
+                .carId(UUID.randomUUID())
+                .build();
+    }
 
 }
