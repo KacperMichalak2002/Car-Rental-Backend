@@ -31,6 +31,12 @@ import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentTypeEntity;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
+import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.RefreshTokenEntity;
+import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
+
+import java.time.LocalDateTime;
+
 
 import java.util.Set;
 import java.math.BigDecimal;
@@ -510,6 +516,15 @@ public final class TestDataUtil {
                 .password(request.getPassword())
                 .provider(AuthProvider.LOCAL)
                 .roles(Set.of(role))
+                .build();
+    }
+
+    public static RefreshTokenEntity createTestRefreshTokenEntity(String token, UserEntity user, LocalDateTime expiry) {
+        return RefreshTokenEntity.builder()
+                .token(token)
+                .user(user)
+                .expiresAt(expiry)
+                .tokenType(TokenType.REFRESH_TOKEN)
                 .build();
     }
 
