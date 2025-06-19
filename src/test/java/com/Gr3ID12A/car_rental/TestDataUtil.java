@@ -19,6 +19,7 @@ import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
+import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
@@ -473,5 +474,13 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static OpinionRequest createTestOpinionRequest() {
+        return OpinionRequest.builder()
+                .rating(5)
+                .description("Great car!")
+                .customerId(UUID.randomUUID())
+                .carId(UUID.randomUUID())
+                .build();
+    }
 
 }
