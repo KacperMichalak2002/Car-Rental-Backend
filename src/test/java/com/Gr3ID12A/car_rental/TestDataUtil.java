@@ -32,7 +32,7 @@ import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 
-
+import java.util.Set;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -494,6 +494,23 @@ public final class TestDataUtil {
         request.setEmail("test@mail.com");
         request.setAddressId(UUID.randomUUID());
         return request;
+    }
+
+    public static UserEntity createTestUserWithRole() {
+        RoleEntity role = new RoleEntity();
+        role.setRoleName(RoleName.ROLE_USER);
+
+        UserRequest request = createTestUserRequest();
+
+        return UserEntity.builder()
+                .id(UUID.randomUUID())
+                .email(request.getEmail())
+                .enabled(true)
+                .name("Test User")
+                .password(request.getPassword())
+                .provider(AuthProvider.LOCAL)
+                .roles(Set.of(role))
+                .build();
     }
 
 }
