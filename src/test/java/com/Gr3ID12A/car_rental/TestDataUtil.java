@@ -17,6 +17,7 @@ import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentStatus;
 import com.Gr3ID12A.car_rental.domain.dto.paymentType.PaymentTypeDto;
 import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataDto;
+import com.Gr3ID12A.car_rental.domain.dto.personalData.PersonalDataRequest;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
@@ -481,6 +482,18 @@ public final class TestDataUtil {
                 .customerId(UUID.randomUUID())
                 .carId(UUID.randomUUID())
                 .build();
+    }
+
+    public static PersonalDataRequest createTestPersonalDataRequest() {
+        PersonalDataRequest request = new PersonalDataRequest();
+        request.setFirst_name("Jan");
+        request.setLast_name("Kowalski");
+        request.setPesel("01234567891");
+        request.setId_number("CD-482");
+        request.setPhone_number("123456789");
+        request.setEmail("test@mail.com");
+        request.setAddressId(UUID.randomUUID());
+        return request;
     }
 
 }
