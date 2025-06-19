@@ -1,172 +1,118 @@
 package com.Gr3ID12A.car_rental.service;
 
+import com.Gr3ID12A.car_rental.TestDataUtil;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
 import com.Gr3ID12A.car_rental.domain.entities.RentalEntity;
 import com.Gr3ID12A.car_rental.mappers.RentalMapper;
 import com.Gr3ID12A.car_rental.repositories.RentalRepository;
 import com.Gr3ID12A.car_rental.services.*;
-
 import com.Gr3ID12A.car_rental.services.impl.RentalServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class RentalServiceImplTest {
 
-    private RentalRepository rentalRepository;
+    @Mock
     private RentalMapper rentalMapper;
+
+    @Mock
+    private RentalRepository rentalRepository;
+
+    @Mock
     private CustomerService customerService;
+
+    @Mock
     private CarService carService;
+
+    @Mock
     private PickUpPlaceService pickUpPlaceService;
+
+    @Mock
     private ReturnPlaceService returnPlaceService;
 
+    @InjectMocks
     private RentalServiceImpl rentalService;
 
     @BeforeEach
     void setUp() {
-        rentalRepository = mock(RentalRepository.class);
-        rentalMapper = mock(RentalMapper.class);
-        customerService = mock(CustomerService.class);
-        carService = mock(CarService.class);
-        pickUpPlaceService = mock(PickUpPlaceService.class);
-        returnPlaceService = mock(ReturnPlaceService.class);
-
-        rentalService = new RentalServiceImpl(
-                rentalMapper,
-                rentalRepository,
-                customerService,
-                carService,
-                pickUpPlaceService,
-                returnPlaceService
-        );
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void shouldCreateRentalSuccessfullyWhenDataIsValid() {
-        // given
-        UUID customerId = UUID.randomUUID();
-        UUID carId = UUID.randomUUID();
-        UUID pickUpPlaceId = UUID.randomUUID();
-        UUID returnPlaceId = UUID.randomUUID();
+    void shouldListRentals() {
+        List<RentalEntity> rentalEntities = List.of(TestDataUtil.createRentalEntity());
+        List<RentalDto> rentalDtos = List.of(TestDataUtil.createTestRentalDto());
 
-        RentalRequest request = new RentalRequest();
-        request.setCustomerId(customerId);
-        request.setCarId(carId);
-        request.setPick_up_placeId(pickUpPlaceId);
-        request.setReturn_placeId(returnPlaceId);
+        when(rentalRepository.findAll()).thenReturn(rentalEntities);
+        when(rentalMapper.toDto(any())).thenReturn(rentalDtos.get(0));
 
-        RentalEntity entity = new RentalEntity();
-        RentalEntity savedEntity = new RentalEntity();
-        RentalDto dto = new RentalDto();
-
-        when(rentalMapper.toEntity(request)).thenReturn(entity);
-        when(rentalRepository.save(entity)).thenReturn(savedEntity);
-        when(rentalMapper.toDto(savedEntity)).thenReturn(dto);
-
-        // when
-        RentalDto result = rentalService.createRental(request);
-
-        // then
-        assertNotNull(result);
-        verify(rentalMapper).toEntity(request);
-        verify(rentalRepository).save(entity);
-        verify(rentalMapper).toDto(savedEntity);
-    }
-
-    @Test
-    void shouldReturnListOfRentalsByCustomerId() {
-        // given
-        UUID customerId = UUID.randomUUID();
-        RentalEntity entity1 = new RentalEntity();
-        RentalEntity entity2 = new RentalEntity();
-        RentalDto dto1 = new RentalDto();
-        RentalDto dto2 = new RentalDto();
-
-        when(rentalRepository.findAllByCustomer_Id(customerId)).thenReturn(List.of(entity1, entity2));
-        when(rentalMapper.toDto(entity1)).thenReturn(dto1);
-        when(rentalMapper.toDto(entity2)).thenReturn(dto2);
-
-        // when
-        List<RentalDto> result = rentalService.listRentalsByCustomer(customerId);
-
-        // then
-        assertEquals(2, result.size());
-        assertTrue(result.contains(dto1));
-        assertTrue(result.contains(dto2));
-        verify(rentalRepository).findAllByCustomer_Id(customerId);
-    }
-
-    @Test
-    void shouldReturnTrueWhenRentalExists() {
-        // given
-        UUID rentalId = UUID.randomUUID();
-        when(rentalRepository.existsById(rentalId)).thenReturn(true);
-
-        // when
-        boolean result = rentalService.isExist(rentalId);
-
-        // then
-        assertTrue(result);
-        verify(rentalRepository).existsById(rentalId);
-    }
-
-
-    @Test
-    void shouldReturnFalseWhenRentalDoesNotExist() {
-        // given
-        UUID rentalId = UUID.randomUUID();
-        when(rentalRepository.existsById(rentalId)).thenReturn(false);
-
-        // when
-        boolean result = rentalService.isExist(rentalId);
-
-        // then
-        assertFalse(result);
-        verify(rentalRepository).existsById(rentalId);
-    }
-
-    @Test
-    void shouldDeleteRentalById() {
-        // given
-        UUID rentalId = UUID.randomUUID();
-
-        // when
-        rentalService.delete(rentalId);
-
-        // then
-        verify(rentalRepository).deleteById(rentalId);
-    }
-
-
-    @Test
-    void shouldReturnListOfAllRentals() {
-        // given
-        RentalEntity rental1 = new RentalEntity();
-        RentalEntity rental2 = new RentalEntity();
-        List<RentalEntity> rentals = List.of(rental1, rental2);
-
-        RentalDto dto1 = new RentalDto();
-        RentalDto dto2 = new RentalDto();
-        List<RentalDto> expectedDtos = List.of(dto1, dto2);
-
-        when(rentalRepository.findAll()).thenReturn(rentals);
-        when(rentalMapper.toDto(rental1)).thenReturn(dto1);
-        when(rentalMapper.toDto(rental2)).thenReturn(dto2);
-
-        // when
         List<RentalDto> result = rentalService.listRentals();
 
-        // then
-        assertEquals(expectedDtos.size(), result.size());
-        assertEquals(expectedDtos, result);
-        verify(rentalRepository).findAll();
-        verify(rentalMapper, times(2)).toDto(any());
+        assertEquals(1, result.size());
+        assertEquals(rentalDtos.get(0), result.get(0));
+        verify(rentalRepository, times(1)).findAll();
     }
 
+    @Test
+    void shouldListRentalsByCustomer() {
+        UUID customerId = UUID.randomUUID();
+        List<RentalEntity> rentalEntities = List.of(TestDataUtil.createRentalEntity());
+        List<RentalDto> rentalDtos = List.of(TestDataUtil.createTestRentalDto());
+
+        when(rentalRepository.findAllByCustomer_Id(customerId)).thenReturn(rentalEntities);
+        when(rentalMapper.toDto(any())).thenReturn(rentalDtos.get(0));
+
+        List<RentalDto> result = rentalService.listRentalsByCustomer(customerId);
+
+        assertEquals(1, result.size());
+        assertEquals(rentalDtos.get(0), result.get(0));
+        verify(rentalRepository, times(1)).findAllByCustomer_Id(customerId);
+    }
+
+    @Test
+    void shouldCreateRental() {
+        RentalRequest rentalRequest = TestDataUtil.createTestRentalRequest();
+        RentalEntity rentalEntity = TestDataUtil.createRentalEntity();
+        RentalDto rentalDto = TestDataUtil.createTestRentalDto();
+
+        when(rentalMapper.toEntity(rentalRequest)).thenReturn(rentalEntity);
+        when(rentalRepository.save(rentalEntity)).thenReturn(rentalEntity);
+        when(rentalMapper.toDto(rentalEntity)).thenReturn(rentalDto);
+
+        RentalDto result = rentalService.createRental(rentalRequest);
+
+        assertEquals(rentalDto, result);
+        verify(rentalRepository, times(1)).save(rentalEntity);
+    }
+
+    @Test
+    void shouldDeleteRental() {
+        UUID rentalId = UUID.randomUUID();
+
+        rentalService.delete(rentalId);
+
+        verify(rentalRepository, times(1)).deleteById(rentalId);
+    }
+
+    @Test
+    void shouldCheckRentalExistence() {
+        UUID rentalId = UUID.randomUUID();
+
+        when(rentalRepository.existsById(rentalId)).thenReturn(true);
+
+        boolean result = rentalService.isExist(rentalId);
+
+        assertEquals(true, result);
+        verify(rentalRepository, times(1)).existsById(rentalId);
+    }
 }

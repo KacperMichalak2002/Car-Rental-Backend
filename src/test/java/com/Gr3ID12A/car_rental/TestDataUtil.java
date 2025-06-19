@@ -34,6 +34,7 @@ import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.RefreshTokenEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
+import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
 
 import java.time.LocalDateTime;
 
@@ -525,6 +526,18 @@ public final class TestDataUtil {
                 .user(user)
                 .expiresAt(expiry)
                 .tokenType(TokenType.REFRESH_TOKEN)
+                .build();
+    }
+
+    public static RentalRequest createTestRentalRequest() {
+        return RentalRequest.builder()
+                .carId(UUID.randomUUID())
+                .customerId(UUID.randomUUID())
+                .pick_up_placeId(UUID.randomUUID())
+                .return_placeId(UUID.randomUUID())
+                .date_of_rental(LocalDate.now())
+                .date_of_return(LocalDate.now().plusDays(5))
+                .status("Completed")
                 .build();
     }
 
