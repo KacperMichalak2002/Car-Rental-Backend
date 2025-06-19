@@ -9,6 +9,7 @@ import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
+import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentDto;
 import com.Gr3ID12A.car_rental.domain.dto.payment.PaymentRequest;
@@ -45,6 +46,10 @@ public final class TestDataUtil {
         return MakeDto.builder()
                 .name("Volkswagen")
                 .build();
+    }
+
+    public static MakeRequest createTestMakeRequest() {
+        return new MakeRequest("Volkswagen");
     }
 
 
