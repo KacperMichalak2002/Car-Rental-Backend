@@ -154,6 +154,18 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static CarRequest createTestCarRequest() {
+        return CarRequest.builder()
+                .availability("Available")
+                .cost(BigDecimal.valueOf(250.00))
+                .deposit(BigDecimal.valueOf(100.00))
+                .description("Description")
+                .image_url("/test/images/img.png")
+                .modelId(UUID.randomUUID())
+                .specificationId(UUID.randomUUID())
+                .build();
+    }
+
     public static AddressEntity createTestAddressEntity(){
         return AddressEntity.builder()
                 .id(UUID.randomUUID())
