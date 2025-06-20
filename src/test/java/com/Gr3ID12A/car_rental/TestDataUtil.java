@@ -43,6 +43,8 @@ import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
 import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
+import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -74,8 +76,9 @@ public final class TestDataUtil {
     }
 
 
-    public static BodyTypeEntity createTestBodyTypeEntity(){
+    public static BodyTypeEntity createTestBodyTypeEntity() {
         return BodyTypeEntity.builder()
+                .id(UUID.randomUUID())
                 .name("Minivan")
                 .build();
     }
@@ -499,24 +502,39 @@ public final class TestDataUtil {
         UserRequest userRequest = new UserRequest();
         userRequest.setEmail("test@example.com");
         userRequest.setPassword("securePassword123");
+        userRequest.setRole(RoleName.ROLE_USER.name());
         return userRequest;
     }
 
+
     public static UserEntity createTestUserEntity() {
+        RoleEntity defaultRole = new RoleEntity();
+        defaultRole.setId(UUID.randomUUID());
+        defaultRole.setRoleName(RoleName.ROLE_USER);
+
+        return createTestUserEntity(defaultRole);
+    }
+
+    public static UserRequest createTestUserRequestWithRole(String role) {
+        UserRequest userRequest = new UserRequest();
+        userRequest.setEmail("test@example.com");
+        userRequest.setPassword("securePassword123");
+        userRequest.setRole(role);
+        return userRequest;
+    }
+
+
+    public static UserEntity createTestUserEntity(RoleEntity role) {
         UserEntity user = new UserEntity();
-        user.setId(UUID.randomUUID());
         user.setEmail("test@example.com");
         user.setPassword("encodedPassword123");
         user.setEnabled(true);
         user.setProvider(AuthProvider.LOCAL);
-
-        RoleEntity role = new RoleEntity();
-        role.setId(UUID.randomUUID());
-        role.setRoleName(RoleName.ROLE_USER);
-
         user.setRoles(Set.of(role));
         return user;
     }
+
+
 
 
 
@@ -560,9 +578,11 @@ public final class TestDataUtil {
 
     public static RoleEntity createTestUserRole() {
         RoleEntity role = new RoleEntity();
+        role.setId(UUID.randomUUID());
         role.setRoleName(RoleName.ROLE_USER);
         return role;
     }
+
 
     public static UserEntity createTestUserEntityWithEmail(String email) {
         return UserEntity.builder()
@@ -633,5 +653,18 @@ public final class TestDataUtil {
                 .status("Completed")
                 .build();
     }
+
+    public static UserRequest createInvalidUserRequest() {
+        UserRequest userRequest = new UserRequest();
+        userRequest.setEmail("wrong@example.com");
+        userRequest.setPassword("wrongPassword");
+        return userRequest;
+    }
+    public static RefreshTokenRequest createRefreshTokenRequest() {
+        RefreshTokenRequest request = new RefreshTokenRequest();
+        request.setRefreshToken("test-refresh-token");
+        return request;
+    }
+
 
 }

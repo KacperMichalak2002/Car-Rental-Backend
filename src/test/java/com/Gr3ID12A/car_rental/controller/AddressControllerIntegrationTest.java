@@ -85,7 +85,6 @@ class AddressControllerIntegrationTest {
     void shouldUpdateAddressPartially() throws Exception {
         AddressRequest updateRequest = TestDataUtil.createUpdatedAddressRequest();
 
-
         mockMvc.perform(patch("/addresses/" + savedAddress.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
