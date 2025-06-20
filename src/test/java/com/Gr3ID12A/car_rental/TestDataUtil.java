@@ -93,11 +93,41 @@ public final class TestDataUtil {
         return new BodyTypeRequest("SUV");
     }
 
-    public static ModelEntity createTestModelEntityA(){
-        return ModelEntity.builder()
-                .make(createTestMakeEntity())
-                .bodyType(createTestBodyTypeEntity())
-                .name("Touran")
+    public static PersonalDataEntity createTestPersonalDataEntity2() {
+        return PersonalDataEntity.builder()
+                .id(UUID.randomUUID())
+                .email("other@mail.com")
+                .first_name("Anna")
+                .last_name("Nowak")
+                .id_number("EF-111")
+                .pesel("12345678901")
+                .phone_number("987654321")
+                .address(createTestAddressEntity())
+                .build();
+    }
+
+    public static CustomerEntity createTestCustomerEntity(PersonalDataEntity personalData) {
+        return CustomerEntity.builder()
+                .id(UUID.randomUUID())
+                .date_of_joining(LocalDate.now())
+                .loyalty_points(150)
+                .personalData(personalData)
+                .user(createTestLocalUserEntity())
+                .build();
+    }
+
+    public static CustomerRequest createTestCustomerRequest(UUID personalDataId) {
+        return CustomerRequest.builder()
+                .personalDataId(personalDataId)
+                .userId(UUID.randomUUID()) // Możesz później dopisać metodę createTestUserEntity(id)
+                .loyalty_points(200)
+                .build();
+    }
+    public static CustomerRequest createTestCustomerRequest(UUID personalDataId, UUID userId) {
+        return CustomerRequest.builder()
+                .personalDataId(personalDataId)
+                .userId(userId)
+                .loyalty_points(200)
                 .build();
     }
 
@@ -167,6 +197,8 @@ public final class TestDataUtil {
     }
 
 
+
+
     public static PickUpPlaceRequest createTestPickUpPlace(UUID addressId) {
         return PickUpPlaceRequest.builder()
                 .name("Kielce Park Technologiczny")
@@ -184,22 +216,39 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static CarEntity createTestCarEntity(){
+    public static CarEntity createTestCarEntity() {
         return CarEntity.builder()
                 .id(UUID.randomUUID())
                 .availability("Available")
                 .cost(BigDecimal.valueOf(250.00))
                 .description("Description")
                 .image_url("/test/images/img.png")
-                .model(createTestModelEntityA())
+                .model(createTestModelEntity())
                 .specification(createTestSpecificationEntity())
                 .build();
-
     }
 
-    public static CarDto createTestCarDto(){
-        return  CarDto.builder().
-                availability("Available")
+    public static ModelEntity createTestModelEntity() {
+        return ModelEntity.builder()
+                .name("Touran")
+                .make(createTestMakeEntity())
+                .bodyType(createTestBodyTypeEntity())
+                .build();
+    }
+
+    public static ModelEntity createTestModelEntityA() {
+        return ModelEntity.builder()
+                .name("Passat")
+                .make(createTestMakeEntity())
+                .bodyType(createTestBodyTypeEntity())
+                .build();
+    }
+
+
+
+    public static CarDto createTestCarDto() {
+        return CarDto.builder()
+                .availability("Available")
                 .cost(BigDecimal.valueOf(250.00))
                 .description("Description")
                 .image_url("/test/images/img.png")
@@ -208,6 +257,10 @@ public final class TestDataUtil {
                 .build();
     }
 
+
+    public static final UUID TEST_MODEL_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    public static final UUID TEST_SPECIFICATION_ID = UUID.fromString("22222222-2222-2222-2222-222222222222");
+
     public static CarRequest createTestCarRequest() {
         return CarRequest.builder()
                 .availability("Available")
@@ -215,14 +268,14 @@ public final class TestDataUtil {
                 .deposit(BigDecimal.valueOf(100.00))
                 .description("Description")
                 .image_url("/test/images/img.png")
-                .modelId(UUID.randomUUID())
-                .specificationId(UUID.randomUUID())
+                .modelId(TEST_MODEL_ID)
+                .specificationId(TEST_SPECIFICATION_ID)
                 .build();
     }
 
+
     public static AddressEntity createTestAddressEntity(){
         return AddressEntity.builder()
-                .id(UUID.randomUUID())
                 .city("Kielce")
                 .country("Polska")
                 .postal_code("25-518")
@@ -238,6 +291,15 @@ public final class TestDataUtil {
                 .postal_code("25-518")
                 .street("Wolska")
                 .street("12A")
+                .build();
+    }
+    public static CarEntity createCarEntity() {
+        return CarEntity.builder()
+                .id(UUID.randomUUID())
+                .description("Test Car")
+                .availability("Available")
+                .cost(new BigDecimal("100.00"))
+                .deposit(new BigDecimal("50.00"))
                 .build();
     }
 
@@ -583,6 +645,18 @@ public final class TestDataUtil {
         return role;
     }
 
+    public static UserEntity createTestLocalUserEntityWithRole(RoleEntity role) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+        return UserEntity.builder()
+                .email("user@example.com")
+                .password(encoder.encode("testPassword"))
+                .provider(AuthProvider.LOCAL)
+                .roles(Set.of(role))
+                .enabled(true)
+                .build();
+    }
+
+
 
     public static UserEntity createTestUserEntityWithEmail(String email) {
         return UserEntity.builder()
@@ -667,4 +741,30 @@ public final class TestDataUtil {
     }
 
 
+    public static RoleEntity createTestAdminRole() {
+        return RoleEntity.builder()
+                .roleName(RoleName.ROLE_ADMIN)
+                .build();
+    }
+
+    public static CustomerEntity createTestCustomer(UserEntity user, PersonalDataEntity personalDataEntity){
+        return CustomerEntity.builder()
+                .user(user)
+                .personalData(personalDataEntity)
+                .date_of_joining(LocalDate.now())
+                .loyalty_points(0)
+                .build();
+    }
+
+    public static PersonalDataEntity createTestPersonalDataEntityWithAddressGivven(AddressEntity address) {
+        return PersonalDataEntity.builder()
+                .email("test@mail.com")
+                .first_name("Jan")
+                .last_name("Kowalski")
+                .id_number("CD-482")
+                .pesel("01234567891")
+                .phone_number("123456789")
+                .address(address)
+                .build();
+    }
 }
