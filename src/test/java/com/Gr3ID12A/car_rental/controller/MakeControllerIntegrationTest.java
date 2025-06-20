@@ -55,7 +55,6 @@ public class MakeControllerIntegrationTest {
 
     @BeforeEach
     void setup() throws Exception {
-        // 1. Wyczyść dane
         makeRepository.deleteAll();
         tokenRepository.deleteAll();
         userRepository.deleteAll();
