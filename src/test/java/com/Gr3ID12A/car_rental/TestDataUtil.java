@@ -224,7 +224,7 @@ public final class TestDataUtil {
                 .country("Polska")
                 .postal_code("25-518")
                 .street("Wolska")
-                .street("12A")
+                .street_number("12A")
                 .build();
     }
 
@@ -235,6 +235,16 @@ public final class TestDataUtil {
                 .postal_code("25-518")
                 .street("Wolska")
                 .street("12A")
+                .build();
+    }
+
+    public static AddressRequest createUpdatedAddressRequest() {
+        return AddressRequest.builder()
+                .city("Warszawa")
+                .country("Polska")
+                .postal_code("00-001")
+                .street("Marszałkowska")
+                .street_number("1")
                 .build();
     }
 
