@@ -6,10 +6,12 @@ import com.Gr3ID12A.car_rental.domain.entities.*;
 import com.Gr3ID12A.car_rental.mappers.RentalMapper;
 import com.Gr3ID12A.car_rental.repositories.RentalRepository;
 import com.Gr3ID12A.car_rental.services.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -73,5 +75,17 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public boolean isExist(UUID rentalId) {
         return rentalRepository.existsById(rentalId);
+    }
+
+    @Override
+    public RentalDto partialUpdateRental(UUID id, RentalRequest rentalRequest) {
+        RentalEntity rentalToUpdate = rentalMapper.toEntity(rentalRequest);
+
+        RentalEntity updatedRental = rentalRepository.findById(id).map(existingRental -> {
+            Optional.ofNullable(rentalToUpdate.getStatus()).ifPresent(existingRental::setStatus);
+            return rentalRepository.save(existingRental);
+        }).orElseThrow( () -> new EntityNotFoundException("Rental was not found"));
+
+        return rentalMapper.toDto(updatedRental);
     }
 }

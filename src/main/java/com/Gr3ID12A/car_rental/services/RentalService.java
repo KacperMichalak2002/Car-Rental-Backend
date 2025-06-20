@@ -16,4 +16,6 @@ public interface RentalService {
     void delete(UUID id);
 
     boolean isExist(UUID rentalId);
+
+    RentalDto partialUpdateRental(UUID id, RentalRequest rentalRequest);
 }

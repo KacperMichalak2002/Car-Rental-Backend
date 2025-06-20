@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +54,19 @@ public class RentalController {
     public ResponseEntity<Void> deleteRental(@PathVariable("id")UUID id){
         rentalService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping(path = "/{id}/status")
+    public ResponseEntity<RentalDto> partialUpdateRental(@PathVariable("id") UUID id, @RequestBody RentalRequest rentalRequest){
+        boolean rentalExist = rentalService.isExist(id);
+
+        if(!rentalExist){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        RentalDto updatedRental = rentalService.partialUpdateRental(id, rentalRequest);
+        return new ResponseEntity<>(updatedRental, HttpStatus.OK);
+
     }
 
 
