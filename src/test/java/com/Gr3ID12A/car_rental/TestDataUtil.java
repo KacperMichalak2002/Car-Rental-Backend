@@ -78,7 +78,6 @@ public final class TestDataUtil {
 
     public static BodyTypeEntity createTestBodyTypeEntity() {
         return BodyTypeEntity.builder()
-                .id(UUID.randomUUID())
                 .name("Minivan")
                 .build();
     }
@@ -95,7 +94,6 @@ public final class TestDataUtil {
 
     public static PersonalDataEntity createTestPersonalDataEntity2() {
         return PersonalDataEntity.builder()
-                .id(UUID.randomUUID())
                 .email("other@mail.com")
                 .first_name("Anna")
                 .last_name("Nowak")
@@ -108,7 +106,6 @@ public final class TestDataUtil {
 
     public static CustomerEntity createTestCustomerEntity(PersonalDataEntity personalData) {
         return CustomerEntity.builder()
-                .id(UUID.randomUUID())
                 .date_of_joining(LocalDate.now())
                 .loyalty_points(150)
                 .personalData(personalData)
@@ -149,7 +146,6 @@ public final class TestDataUtil {
 
     public static SpecificationEntity createTestSpecificationEntity(){
         return SpecificationEntity.builder()
-                .id(UUID.randomUUID())
                 .color("Blue")
                 .driveType("FWD")
                 .engineCapacity(1.6)
@@ -216,17 +212,6 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static CarEntity createTestCarEntity() {
-        return CarEntity.builder()
-                .id(UUID.randomUUID())
-                .availability("Available")
-                .cost(BigDecimal.valueOf(250.00))
-                .description("Description")
-                .image_url("/test/images/img.png")
-                .model(createTestModelEntity())
-                .specification(createTestSpecificationEntity())
-                .build();
-    }
 
     public static ModelEntity createTestModelEntity() {
         return ModelEntity.builder()
@@ -295,7 +280,6 @@ public final class TestDataUtil {
     }
     public static CarEntity createCarEntity() {
         return CarEntity.builder()
-                .id(UUID.randomUUID())
                 .description("Test Car")
                 .availability("Available")
                 .cost(new BigDecimal("100.00"))
@@ -316,7 +300,6 @@ public final class TestDataUtil {
 
     public static PickUpPlaceEntity createTestPickUpPlaceEntity(){
         return PickUpPlaceEntity.builder()
-                .id(UUID.randomUUID())
                 .address(createTestAddressEntity())
                 .build();
     }
@@ -329,7 +312,6 @@ public final class TestDataUtil {
 
     public static ReturnPlaceEntity createTestReturnPlaceEntity(){
         return ReturnPlaceEntity.builder()
-                .id(UUID.randomUUID())
                 .address(createTestAddressEntity())
                 .build();
     }
@@ -342,7 +324,6 @@ public final class TestDataUtil {
 
     public static PersonalDataEntity createTestPersonalDataEntity(){
         return PersonalDataEntity.builder()
-                .id(UUID.randomUUID())
                 .email("test@mail.com")
                 .first_name("Jan")
                 .last_name("Kowalski")
@@ -366,16 +347,17 @@ public final class TestDataUtil {
     }
 
     public static UserEntity createTestLocalUserEntity(){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return UserEntity.builder()
-                .id(UUID.randomUUID())
                 .email("test@mail.com")
                 .enabled(true)
                 .name("Jan Kowalki")
-                .password("password")
+                .password(encoder.encode("password"))
                 .provider(AuthProvider.LOCAL)
                 .providerId(null)
                 .build();
     }
+
 
     public static UserDto createTestLocalUserDto(){
         return UserDto.builder()
@@ -389,7 +371,6 @@ public final class TestDataUtil {
 
     public static UserEntity createTestGoogleUserEntity(){
         return UserEntity.builder()
-                .id(UUID.randomUUID())
                 .email("test@mail.com")
                 .enabled(true)
                 .name("Jan Kowalki")
@@ -412,7 +393,6 @@ public final class TestDataUtil {
 
     public static CustomerEntity createTestCustomerEntity(){
         return CustomerEntity.builder()
-                .id(UUID.randomUUID())
                 .date_of_joining(LocalDate.now())
                 .loyalty_points(100)
                 .personalData(createTestPersonalDataEntity())
@@ -439,7 +419,6 @@ public final class TestDataUtil {
 
     public static RentalEntity createRentalEntity(){
         return RentalEntity.builder()
-                .id(UUID.randomUUID())
                 .date_of_rental(LocalDate.now())
                 .date_of_return(LocalDate.now())
                 .status("Completed")
@@ -449,6 +428,25 @@ public final class TestDataUtil {
                 .return_place(createTestReturnPlaceEntity())
                 .build();
     }
+
+    public static CarEntity createTestCarEntity() {
+        ModelEntity model = createTestModelEntity();
+        SpecificationEntity specification = createTestSpecificationEntity();
+        return createTestCarEntity(model, specification);
+    }
+
+    public static CarEntity createTestCarEntity(ModelEntity model, SpecificationEntity specification) {
+        return CarEntity.builder()
+                .availability("Available")
+                .cost(new BigDecimal("250.00"))
+                .deposit(new BigDecimal("100.00"))
+                .description("Description")
+                .image_url("/test/images/img.png")
+                .model(model)
+                .specification(specification)
+                .build();
+    }
+
 
     public static RentalDto createTestRentalDto(){
         return RentalDto.builder()
@@ -466,7 +464,6 @@ public final class TestDataUtil {
 
     public static PaymentTypeEntity createTestOnlinePaymentType(){
         return PaymentTypeEntity.builder()
-                .id(UUID.randomUUID())
                 .name(PaymentName.ONLINE)
                 .build();
     }
@@ -479,7 +476,6 @@ public final class TestDataUtil {
 
     public static PaymentTypeEntity createTestOfflinePaymentType(){
         return PaymentTypeEntity.builder()
-                .id(UUID.randomUUID())
                 .name(PaymentName.OFFLINE)
                 .build();
     }
@@ -493,7 +489,6 @@ public final class TestDataUtil {
 
     public static PaymentEntity createTestOnlinePaymentEntity(){
         return PaymentEntity.builder()
-                .id(UUID.randomUUID())
                 .title("Payment online")
                 .cost(BigDecimal.valueOf(1000.00))
                 .status(PaymentStatus.COMPLETED.name())
@@ -518,7 +513,6 @@ public final class TestDataUtil {
 
     public static PaymentEntity createTestOfflinePaymentEntity(){
         return PaymentEntity.builder()
-                .id(UUID.randomUUID())
                 .title("Payment offline")
                 .cost(BigDecimal.valueOf(1000.00))
                 .status(PaymentStatus.COMPLETED.name())
@@ -587,14 +581,16 @@ public final class TestDataUtil {
 
 
     public static UserEntity createTestUserEntity(RoleEntity role) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
-        user.setPassword("encodedPassword123");
+        user.setPassword(encoder.encode("encodedPassword123"));
         user.setEnabled(true);
         user.setProvider(AuthProvider.LOCAL);
         user.setRoles(Set.of(role));
         return user;
     }
+
 
 
 
@@ -659,15 +655,16 @@ public final class TestDataUtil {
 
 
     public static UserEntity createTestUserEntityWithEmail(String email) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return UserEntity.builder()
-                .id(UUID.randomUUID())
                 .email(email)
                 .enabled(true)
                 .name("Test User")
-                .password("testpassword")
+                .password(encoder.encode("testpassword"))
                 .provider(AuthProvider.LOCAL)
                 .build();
     }
+
 
     public static OpinionRequest createTestOpinionRequest() {
         return OpinionRequest.builder()
@@ -695,17 +692,18 @@ public final class TestDataUtil {
         role.setRoleName(RoleName.ROLE_USER);
 
         UserRequest request = createTestUserRequest();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         return UserEntity.builder()
-                .id(UUID.randomUUID())
                 .email(request.getEmail())
                 .enabled(true)
                 .name("Test User")
-                .password(request.getPassword())
+                .password(encoder.encode(request.getPassword()))
                 .provider(AuthProvider.LOCAL)
                 .roles(Set.of(role))
                 .build();
     }
+
 
     public static RefreshTokenEntity createTestRefreshTokenEntity(String token, UserEntity user, LocalDateTime expiry) {
         return RefreshTokenEntity.builder()
@@ -755,6 +753,7 @@ public final class TestDataUtil {
                 .loyalty_points(0)
                 .build();
     }
+
 
     public static PersonalDataEntity createTestPersonalDataEntityWithAddressGivven(AddressEntity address) {
         return PersonalDataEntity.builder()
