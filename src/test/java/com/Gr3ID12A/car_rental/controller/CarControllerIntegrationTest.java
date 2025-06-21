@@ -29,20 +29,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CarControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
-
     @Autowired private MakeRepository makeRepository;
     @Autowired private BodyTypeRepository bodyTypeRepository;
     @Autowired private ModelRepository modelRepository;
     @Autowired private SpecificationRepository specificationRepository;
     @Autowired private CarRepository carRepository;
-
     @Autowired private RoleRepository roleRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private AddressRepository addressRepository;
     @Autowired private PersonalDataRepository personalDataRepository;
     @Autowired private CustomerRepository customerRepository;
     @Autowired private TokenRepository tokenRepository;
-
     @Autowired private ObjectMapper objectMapper;
 
     private String authToken;
@@ -67,7 +64,8 @@ public class CarControllerIntegrationTest {
         RoleEntity role = roleRepository.save(TestDataUtil.createTestAdminRole());
         UserEntity user = userRepository.save(TestDataUtil.createTestLocalUserEntityWithRole(role));
         AddressEntity address = addressRepository.save(TestDataUtil.createTestAddressEntity());
-        PersonalDataEntity personalData = personalDataRepository.save(TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
+        PersonalDataEntity personalData = personalDataRepository.save(
+                TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
         customerRepository.save(TestDataUtil.createTestCustomer(user, personalData));
 
         UserRequest loginRequest = UserRequest.builder()
@@ -86,11 +84,13 @@ public class CarControllerIntegrationTest {
 
         MakeEntity make = makeRepository.save(TestDataUtil.createTestMakeEntity());
         BodyTypeEntity bodyType = bodyTypeRepository.save(TestDataUtil.createTestBodyTypeEntity());
+
         savedModel = modelRepository.save(ModelEntity.builder()
                 .name("Touran")
                 .make(make)
                 .bodyType(bodyType)
                 .build());
+
         savedSpec = specificationRepository.save(TestDataUtil.createTestSpecificationEntity());
 
         savedCar = carRepository.save(TestDataUtil.createTestCarEntity(savedModel, savedSpec));
@@ -101,8 +101,8 @@ public class CarControllerIntegrationTest {
         mockMvc.perform(get("/cars")
                         .header("Authorization", "Bearer " + authToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].availability").value("Available"))
-                .andExpect(jsonPath("$[0].description").value("Description"));
+                .andExpect(jsonPath("$[0].availability").value("AVAILABLE"))
+                .andExpect(jsonPath("$[0].description").value("Nowoczesny samochód z automatyczną skrzynią biegów"));
     }
 
     @Test
@@ -122,11 +122,9 @@ public class CarControllerIntegrationTest {
 
     @Test
     void shouldCreateNewCar() throws Exception {
-        SpecificationEntity newSpec = specificationRepository.save(
-                TestDataUtil.createTestSpecificationEntity().builder()
-                        .engineCapacity(2.2)
-                        .build()
-        );
+        SpecificationEntity modifiedSpec = TestDataUtil.createTestSpecificationEntity();
+        modifiedSpec.setEngineCapacity(2.2);
+        SpecificationEntity newSpec = specificationRepository.save(modifiedSpec);
 
         CarRequest request = CarRequest.builder()
                 .availability("Available")

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,32 +23,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AuthControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private PersonalDataRepository personalDataRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private TokenRepository tokenRepository;
+    @Autowired private RoleRepository roleRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private AddressRepository addressRepository;
+    @Autowired private PersonalDataRepository personalDataRepository;
+    @Autowired private CustomerRepository customerRepository;
+    @Autowired private TokenRepository tokenRepository;
 
     @BeforeEach
     void setup() {
@@ -76,7 +64,8 @@ public class AuthControllerIntegrationTest {
         RoleEntity role = roleRepository.save(TestDataUtil.createTestAdminRole());
         UserEntity user = userRepository.save(TestDataUtil.createTestLocalUserEntityWithRole(role));
         AddressEntity address = addressRepository.save(TestDataUtil.createTestAddressEntity());
-        PersonalDataEntity personalData = personalDataRepository.save(TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
+        PersonalDataEntity personalData = personalDataRepository.save(
+                TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
         customerRepository.save(TestDataUtil.createTestCustomer(user, personalData));
 
         UserRequest loginRequest = UserRequest.builder()
@@ -97,7 +86,8 @@ public class AuthControllerIntegrationTest {
         RoleEntity role = roleRepository.save(TestDataUtil.createTestAdminRole());
         UserEntity user = userRepository.save(TestDataUtil.createTestLocalUserEntityWithRole(role));
         AddressEntity address = addressRepository.save(TestDataUtil.createTestAddressEntity());
-        PersonalDataEntity personalData = personalDataRepository.save(TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
+        PersonalDataEntity personalData = personalDataRepository.save(
+                TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
         customerRepository.save(TestDataUtil.createTestCustomer(user, personalData));
 
         UserRequest loginRequest = UserRequest.builder()
@@ -109,10 +99,11 @@ public class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
         AuthResponse authResponse = objectMapper.readValue(loginResponse, AuthResponse.class);
-
         RefreshTokenRequest refreshRequest = new RefreshTokenRequest(authResponse.getRefreshToken());
 
         mockMvc.perform(post("/auth/refreshToken")

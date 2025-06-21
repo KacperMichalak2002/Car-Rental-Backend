@@ -23,7 +23,7 @@ public class PersonalDataController {
     @GetMapping
     public ResponseEntity<List<PersonalDataDto>> listPersonalData(){
         List<PersonalDataDto> personalDataDtos = personalDataService.listPersonalData();
-        return new ResponseEntity<>(personalDataDtos, HttpStatus.CREATED);
+        return new ResponseEntity<>(personalDataDtos, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")

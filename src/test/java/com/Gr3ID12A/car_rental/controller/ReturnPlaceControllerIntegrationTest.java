@@ -3,9 +3,7 @@ package com.Gr3ID12A.car_rental.controller;
 import com.Gr3ID12A.car_rental.TestDataUtil;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.entities.AddressEntity;
-import com.Gr3ID12A.car_rental.repositories.AddressRepository;
-import com.Gr3ID12A.car_rental.repositories.PersonalDataRepository;
-import com.Gr3ID12A.car_rental.repositories.ReturnPlaceRepository;
+import com.Gr3ID12A.car_rental.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,33 +27,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 class ReturnPlaceControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ReturnPlaceRepository returnPlaceRepository;
-
-    @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private PersonalDataRepository personalDataRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ReturnPlaceRepository returnPlaceRepository;
+    @Autowired private AddressRepository addressRepository;
+    @Autowired private PersonalDataRepository personalDataRepository;
+    @Autowired private CustomerRepository customerRepository;
+    @Autowired private RentalRepository rentalRepository;
+    @Autowired private PaymentRepository paymentRepository;
+    @Autowired private ObjectMapper objectMapper;
 
     private AddressEntity savedAddress;
 
     @BeforeEach
     void setUp() {
+        paymentRepository.deleteAll();
+        rentalRepository.deleteAll();
         returnPlaceRepository.deleteAll();
+        customerRepository.deleteAll();
         personalDataRepository.deleteAll();
         addressRepository.deleteAll();
 
-        AddressEntity address = TestDataUtil.createTestAddressEntity();
-        address.setId(null);
-        savedAddress = addressRepository.save(address);
+        savedAddress = addressRepository.save(TestDataUtil.createTestAddressEntity());
     }
+
 
     @Test
     void shouldReturnListOfReturnPlaces() throws Exception {
@@ -70,7 +64,8 @@ class ReturnPlaceControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value(request.getName()));
     }
 
     @Test

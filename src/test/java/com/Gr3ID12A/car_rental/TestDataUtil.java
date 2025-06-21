@@ -458,18 +458,6 @@ public final class TestDataUtil {
         return createTestCarEntity(model, specification);
     }
 
-    public static CarEntity createTestCarEntity(ModelEntity model, SpecificationEntity specification) {
-        return CarEntity.builder()
-                .availability("Available")
-                .cost(new BigDecimal("250.00"))
-                .deposit(new BigDecimal("100.00"))
-                .description("Description")
-                .image_url("/test/images/img.png")
-                .model(model)
-                .specification(specification)
-                .build();
-    }
-
 
     public static ModelEntity createTestModel(MakeEntity make) {
         return ModelEntity.builder()
@@ -773,6 +761,19 @@ public final class TestDataUtil {
     }
 
 
+    public static PaymentEntity createTestPaymentEntity(RentalEntity rental, PaymentTypeEntity paymentType) {
+        return PaymentEntity.builder()
+                .title("Test Payment")
+                .sessionId("test-session-123")
+                .rental(rental)
+                .payment_type(paymentType)
+                .cost(new BigDecimal("1499.99"))
+                .date_of_payment(LocalDate.now())
+                .status("PENDING")
+                .build();
+    }
+
+
     public static RentalEntity createTestRentalEntity(CustomerEntity customer,
                                                       CarEntity car,
                                                       PickUpPlaceEntity pickUp,
@@ -854,11 +855,58 @@ public final class TestDataUtil {
     }
     public static ModelEntity createTestModelEntity(MakeEntity make, BodyTypeEntity bodyType) {
         return ModelEntity.builder()
-                .name("Corolla")
+                .name("TestModel")
                 .make(make)
                 .bodyType(bodyType)
                 .build();
     }
+
+
+    public static PaymentTypeEntity createTestPaymentTypeEntity(PaymentName name) {
+        return PaymentTypeEntity.builder()
+                .name(name)
+                .build();
+    }
+
+    public static CarEntity createTestCarEntity(ModelEntity model, SpecificationEntity specification) {
+        return CarEntity.builder()
+                .model(model)
+                .specification(specification)
+                .cost(new BigDecimal("149.99"))
+                .deposit(new BigDecimal("500.00"))
+                .availability("AVAILABLE")
+                .image_url("https://example.com/image.jpg")
+                .description("Nowoczesny samochód z automatyczną skrzynią biegów")
+                .build();
+    }
+
+    public static PaymentTypeEntity createTestPaymentTypeEntityWithName(PaymentName name) {
+        return PaymentTypeEntity.builder()
+                .name(name)
+                .build();
+    }
+    public static ReturnPlaceEntity createTestReturnPlaceEntityWithAddress(AddressEntity address) {
+        return ReturnPlaceEntity.builder()
+                .name("Test Return Place")
+                .address(address)
+                .build();
+    }
+
+    public static PickUpPlaceEntity createTestPickUpPlaceEntity(AddressEntity address) {
+        return PickUpPlaceEntity.builder()
+                .name("Test PickUp Place")
+                .address(address)
+                .build();
+    }
+
+    public static ReturnPlaceEntity createTestReturnPlaceEntity(AddressEntity address) {
+        return ReturnPlaceEntity.builder()
+                .name("Test Return Place")
+                .address(address)
+                .build();
+    }
+
+
     public static CarEntity createTestCarEntity(ModelEntity model) {
         return CarEntity.builder()
                 .model(model)

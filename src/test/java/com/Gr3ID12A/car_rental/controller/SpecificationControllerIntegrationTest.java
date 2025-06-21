@@ -2,6 +2,7 @@ package com.Gr3ID12A.car_rental.controller;
 
 import com.Gr3ID12A.car_rental.TestDataUtil;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationRequest;
+import com.Gr3ID12A.car_rental.repositories.CarRepository;
 import com.Gr3ID12A.car_rental.repositories.SpecificationRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +27,12 @@ public class SpecificationControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private SpecificationRepository specificationRepository;
+    @Autowired private CarRepository carRepository;
     @Autowired private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
+        carRepository.deleteAll();
         specificationRepository.deleteAll();
     }
 
@@ -54,7 +57,8 @@ public class SpecificationControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/specifications"))
+        mockMvc.perform(get("/specifications")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
@@ -73,7 +77,8 @@ public class SpecificationControllerIntegrationTest {
 
         String id = objectMapper.readTree(response).get("id").asText();
 
-        mockMvc.perform(get("/specifications/" + id))
+        mockMvc.perform(get("/specifications/" + id)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.registration").value(request.getRegistration()));
@@ -81,7 +86,8 @@ public class SpecificationControllerIntegrationTest {
 
     @Test
     void shouldReturn404ForNonExistingSpecification() throws Exception {
-        mockMvc.perform(get("/specifications/00000000-0000-0000-0000-000000000000"))
+        mockMvc.perform(get("/specifications/00000000-0000-0000-0000-000000000000")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 }

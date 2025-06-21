@@ -17,4 +17,5 @@ public class PaymentRequest {
     private UUID rentalId;
     private BigDecimal cost;
     private PaymentName paymentType;
+    private String status;
 }
