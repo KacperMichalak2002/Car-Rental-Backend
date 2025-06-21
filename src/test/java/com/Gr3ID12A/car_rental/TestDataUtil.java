@@ -771,6 +771,13 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static PickUpPlaceRequest createTestPickUpPlaceRequest(UUID addressId) {
+        return PickUpPlaceRequest.builder()
+                .name("Lotnisko Chopina")
+                .addressId(addressId)
+                .build();
+    }
+
     public static PersonalDataRequest createUpdatedPersonalDataRequest(UUID addressId) {
         return PersonalDataRequest.builder()
                 .addressId(addressId)
