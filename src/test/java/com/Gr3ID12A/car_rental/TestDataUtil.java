@@ -25,6 +25,7 @@ import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationRequest;
+import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserDto;
 import com.Gr3ID12A.car_rental.domain.entities.*;
 import com.Gr3ID12A.car_rental.domain.entities.paymentType.PaymentName;
@@ -36,15 +37,14 @@ import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.RefreshTokenEntity;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalRequest;
-import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.token.TokenEntity;
-import com.Gr3ID12A.car_rental.domain.entities.token.TokenType;
-import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
-import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.domain.entities.CustomerEntity;
-import com.Gr3ID12A.car_rental.domain.entities.UserEntity;
 import com.Gr3ID12A.car_rental.domain.dto.refreshToken.RefreshTokenRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
+
 
 import java.util.List;
 
@@ -56,6 +56,9 @@ import java.util.Set;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public final class TestDataUtil {
 
@@ -104,22 +107,6 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static CustomerEntity createTestCustomerEntity(PersonalDataEntity personalData) {
-        return CustomerEntity.builder()
-                .date_of_joining(LocalDate.now())
-                .loyalty_points(150)
-                .personalData(personalData)
-                .user(createTestLocalUserEntity())
-                .build();
-    }
-
-    public static CustomerRequest createTestCustomerRequest(UUID personalDataId) {
-        return CustomerRequest.builder()
-                .personalDataId(personalDataId)
-                .userId(UUID.randomUUID()) // Możesz później dopisać metodę createTestUserEntity(id)
-                .loyalty_points(200)
-                .build();
-    }
     public static CustomerRequest createTestCustomerRequest(UUID personalDataId, UUID userId) {
         return CustomerRequest.builder()
                 .personalDataId(personalDataId)
@@ -268,6 +255,16 @@ public final class TestDataUtil {
                 .street_number("12A")
                 .build();
     }
+
+    public static PersonalDataEntity createTestPersonalDataEntity(AddressEntity address) {
+        return PersonalDataEntity.builder()
+                .first_name("Jan")
+                .last_name("Kowalski")
+                .phone_number("123456789")
+                .address(address)
+                .build();
+    }
+
 
     public static AddressDto createTestAddressDto(){
         return AddressDto.builder()
@@ -565,7 +562,6 @@ public final class TestDataUtil {
 
     public static UserEntity createTestUserEntity() {
         RoleEntity defaultRole = new RoleEntity();
-        defaultRole.setId(UUID.randomUUID());
         defaultRole.setRoleName(RoleName.ROLE_USER);
 
         return createTestUserEntity(defaultRole);
@@ -584,7 +580,7 @@ public final class TestDataUtil {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
-        user.setPassword(encoder.encode("encodedPassword123"));
+        user.setPassword(encoder.encode("testPassword"));
         user.setEnabled(true);
         user.setProvider(AuthProvider.LOCAL);
         user.setRoles(Set.of(role));
@@ -622,7 +618,6 @@ public final class TestDataUtil {
         UserEntity user = new UserEntity();
         user.setId(userId);
         customer.setUser(user);
-        customer.setId(UUID.randomUUID());
         return customer;
     }
 
@@ -632,7 +627,6 @@ public final class TestDataUtil {
         dto.setLoyalty_points(100);
         return dto;
     }
-
 
     public static RoleEntity createTestUserRole() {
         RoleEntity role = new RoleEntity();
@@ -651,6 +645,7 @@ public final class TestDataUtil {
                 .enabled(true)
                 .build();
     }
+
 
 
 
@@ -766,4 +761,40 @@ public final class TestDataUtil {
                 .address(address)
                 .build();
     }
+
+    public static RoleEntity createUserRole() {
+        return RoleEntity.builder()
+                .roleName(RoleName.ROLE_USER)
+                .build();
+    }
+
+    public static CustomerEntity createTestCustomerEntity(UserEntity user, PersonalDataEntity personalData) {
+        return CustomerEntity.builder()
+                .user(user)
+                .personalData(personalData)
+                .date_of_joining(LocalDate.now())
+                .loyalty_points(0)
+                .build();
+    }
+
+    public static String getAuthToken(MockMvc mockMvc, ObjectMapper objectMapper, String email, String password) throws Exception {
+        UserRequest loginRequest = UserRequest.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        String loginResponse = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        AuthResponse authResponse = objectMapper.readValue(loginResponse, AuthResponse.class);
+        return authResponse.getToken();
+    }
+
+    public static String encodePassword(String rawPassword) {
+        return new BCryptPasswordEncoder().encode(rawPassword);
+    }
+
 }
