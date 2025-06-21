@@ -3,8 +3,8 @@ package com.Gr3ID12A.car_rental.controller;
 import com.Gr3ID12A.car_rental.TestDataUtil;
 import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.entities.AddressEntity;
-import com.Gr3ID12A.car_rental.domain.entities.PickUpPlaceEntity;
 import com.Gr3ID12A.car_rental.repositories.AddressRepository;
+import com.Gr3ID12A.car_rental.repositories.PersonalDataRepository;
 import com.Gr3ID12A.car_rental.repositories.PickUpPlaceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -38,6 +39,9 @@ class PickUpPlaceControllerIntegrationTest {
     private AddressRepository addressRepository;
 
     @Autowired
+    private PersonalDataRepository personalDataRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private AddressEntity savedAddress;
@@ -45,6 +49,7 @@ class PickUpPlaceControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         pickUpPlaceRepository.deleteAll();
+        personalDataRepository.deleteAll(); // <== kluczowe!
         addressRepository.deleteAll();
 
         AddressEntity address = TestDataUtil.createTestAddressEntity();
@@ -54,33 +59,23 @@ class PickUpPlaceControllerIntegrationTest {
 
     @Test
     void shouldReturnListOfPickUpPlaces() throws Exception {
-        PickUpPlaceEntity place = PickUpPlaceEntity.builder()
-                .name("Dworzec Centralny")
-                .address(savedAddress)
-                .build();
-        pickUpPlaceRepository.save(place);
+        var request = TestDataUtil.createTestPickUpPlaceRequest(savedAddress.getId());
+        mockMvc.perform(post("/pickUpPlaces")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/pickUpPlaces")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].name").value("Dworzec Centralny"));
+                .andExpect(jsonPath("$[0].name").value(request.getName()));
     }
 
     @Test
-    void shouldCreateNewPickUpPlace() throws Exception {
-        PickUpPlaceRequest request = TestDataUtil.createTestPickUpPlaceRequest(savedAddress.getId());
-
-        mockMvc.perform(post("/pickUpPlaces")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Lotnisko Chopina"));
-    }
-
-    @Test
-    void shouldReturn404WhenAddressNotFound() throws Exception {
-        PickUpPlaceRequest request = TestDataUtil.createTestPickUpPlaceRequest(UUID.randomUUID());
+    void shouldReturn404WhenAddressDoesNotExist() throws Exception {
+        var request = TestDataUtil.createTestPickUpPlaceRequest(UUID.randomUUID());
 
         mockMvc.perform(post("/pickUpPlaces")
                         .contentType(MediaType.APPLICATION_JSON)
