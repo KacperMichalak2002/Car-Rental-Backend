@@ -24,6 +24,7 @@ import com.Gr3ID12A.car_rental.domain.dto.pickUpPlace.PickUpPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.dto.opinion.OpinionRequest;
 import com.Gr3ID12A.car_rental.domain.dto.rental.RentalDto;
 import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceDto;
+import com.Gr3ID12A.car_rental.domain.dto.returnPlace.ReturnPlaceRequest;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationDto;
 import com.Gr3ID12A.car_rental.domain.dto.specification.SpecificationRequest;
 import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
@@ -96,6 +97,19 @@ public final class TestDataUtil {
     public static BodyTypeRequest createTestBodyTypeRequest() {
         return new BodyTypeRequest("SUV");
     }
+
+    public static ReturnPlaceEntity createTestReturnPlace(AddressEntity address) {
+        return ReturnPlaceEntity.builder()
+                .address(address)
+                .build();
+    }
+
+    public static PickUpPlaceEntity createTestPickUpPlace(AddressEntity address) {
+        return PickUpPlaceEntity.builder()
+                .address(address)
+                .build();
+    }
+
 
     public static PersonalDataEntity createTestPersonalDataEntity2() {
         return PersonalDataEntity.builder()
@@ -309,17 +323,27 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static ReturnPlaceEntity createTestReturnPlaceEntity(){
-        return ReturnPlaceEntity.builder()
-                .address(createTestAddressEntity())
-                .build();
-    }
-
     public static ReturnPlaceDto createTestReturnPlaceDto(){
         return ReturnPlaceDto.builder()
                 .address(createTestAddressDto())
                 .build();
     }
+
+
+    public static ReturnPlaceRequest createTestReturnPlaceRequest(UUID addressId) {
+        return ReturnPlaceRequest.builder()
+                .name("Parking Główny")
+                .addressId(addressId)
+                .build();
+    }
+
+    public static ReturnPlaceEntity createTestReturnPlaceEntity() {
+        return ReturnPlaceEntity.builder()
+                .address(createTestAddressEntity())
+                .build();
+    }
+
+
 
     public static PersonalDataEntity createTestPersonalDataEntity(){
         return PersonalDataEntity.builder()
@@ -445,6 +469,31 @@ public final class TestDataUtil {
                 .specification(specification)
                 .build();
     }
+
+
+    public static ModelEntity createTestModel(MakeEntity make) {
+        return ModelEntity.builder()
+                .name("Model X")
+                .make(make)
+                .build();
+    }
+
+    public static SpecificationEntity createTestSpecification() {
+        return SpecificationEntity.builder()
+                .engineCapacity(2.0)
+                .fuelType("Diesel")
+                .gearbox("Automatic")
+                .numberOfSeats(5)
+                .horsepower(150)
+                .mileage(100000)
+                .registration("WX12345")
+                .vin("1HGCM82633A004352")
+                .yearOfProduction(2018)
+                .color("Black")
+                .driveType("AWD")
+                .build();
+    }
+
 
 
     public static RentalDto createTestRentalDto(){
