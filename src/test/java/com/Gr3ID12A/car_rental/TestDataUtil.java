@@ -759,6 +759,31 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static PersonalDataRequest createTestPersonalDataRequest(UUID addressId) {
+        return PersonalDataRequest.builder()
+                .addressId(addressId)
+                .first_name("Jan")
+                .last_name("Kowalski")
+                .pesel("90010112345")
+                .id_number("ABC123456")
+                .phone_number("123456789")
+                .email("jan.kowalski@example.com")
+                .build();
+    }
+
+    public static PersonalDataRequest createUpdatedPersonalDataRequest(UUID addressId) {
+        return PersonalDataRequest.builder()
+                .addressId(addressId)
+                .first_name("Adam")
+                .last_name("Nowak")
+                .pesel("85051567890")
+                .id_number("XYZ987654")
+                .phone_number("987654321")
+                .email("adam.nowak@example.com")
+                .build();
+    }
+
+
     public static RentalEntity createCompleteRentalEntity() {
         return RentalEntity.builder()
                 .car(createTestCarEntity())
