@@ -6,6 +6,7 @@ import com.Gr3ID12A.car_rental.domain.dto.user.AuthResponse;
 import com.Gr3ID12A.car_rental.domain.dto.user.UserRequest;
 import com.Gr3ID12A.car_rental.domain.entities.*;
 import com.Gr3ID12A.car_rental.domain.entities.role.RoleEntity;
+import com.Gr3ID12A.car_rental.domain.entities.role.RoleName;
 import com.Gr3ID12A.car_rental.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,6 +31,7 @@ public class CustomerControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Autowired private CustomerRepository customerRepository;
     @Autowired private PersonalDataRepository personalDataRepository;
@@ -51,8 +54,13 @@ public class CustomerControllerIntegrationTest {
         addressRepository.deleteAll();
         tokenRepository.deleteAll();
 
-        RoleEntity role = roleRepository.save(TestDataUtil.createTestAdminRole());
-        savedUser = userRepository.save(TestDataUtil.createTestLocalUserEntityWithRole(role));
+        RoleEntity role = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
+                .orElseGet(() -> roleRepository.save(TestDataUtil.createTestAdminRole()));
+
+        savedUser = TestDataUtil.createTestLocalUserEntityWithRole(role);
+        savedUser.setPassword(passwordEncoder.encode("testPassword"));
+        savedUser = userRepository.save(savedUser);
+
         AddressEntity address = addressRepository.save(TestDataUtil.createTestAddressEntity());
         savedPersonalData = personalDataRepository.save(TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address));
         savedCustomer = customerRepository.save(TestDataUtil.createTestCustomerEntity(savedUser, savedPersonalData));
@@ -97,7 +105,21 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     void shouldCreateNewCustomer() throws Exception {
-        CustomerRequest request = TestDataUtil.createTestCustomerRequest(savedPersonalData.getId(), savedUser.getId());
+        RoleEntity role = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
+                .orElseGet(() -> roleRepository.save(TestDataUtil.createTestAdminRole()));
+
+
+        UserEntity newUser = TestDataUtil.createTestLocalUserEntityWithRole(role);
+        newUser.setEmail("unique-user-" + UUID.randomUUID() + "@mail.com");
+        newUser.setPassword(passwordEncoder.encode("testPassword"));
+        newUser = userRepository.save(newUser);
+
+        AddressEntity address = addressRepository.save(TestDataUtil.createTestAddressEntity());
+        PersonalDataEntity personalData = personalDataRepository.save(
+                TestDataUtil.createTestPersonalDataEntityWithAddressGivven(address)
+        );
+
+        CustomerRequest request = TestDataUtil.createTestCustomerRequest(personalData.getId(), newUser.getId());
 
         mockMvc.perform(post("/customers")
                         .header("Authorization", "Bearer " + authToken)
