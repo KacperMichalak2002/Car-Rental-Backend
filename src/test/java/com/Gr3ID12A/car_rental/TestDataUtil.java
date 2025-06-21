@@ -8,6 +8,7 @@ import com.Gr3ID12A.car_rental.domain.dto.car.CarDto;
 import com.Gr3ID12A.car_rental.domain.dto.car.CarRequest;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerDto;
 import com.Gr3ID12A.car_rental.domain.dto.customer.CustomerRequest;
+import com.Gr3ID12A.car_rental.domain.dto.insurance.InsuranceRequest;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeDto;
 import com.Gr3ID12A.car_rental.domain.dto.make.MakeRequest;
 import com.Gr3ID12A.car_rental.domain.dto.model.ModelDto;
@@ -46,7 +47,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 
-
+import java.util.Date;
 import java.util.List;
 
 
@@ -721,6 +722,78 @@ public final class TestDataUtil {
                 .status("Completed")
                 .build();
     }
+
+
+    public static RentalEntity createTestRentalEntity(CustomerEntity customer,
+                                                      CarEntity car,
+                                                      PickUpPlaceEntity pickUp,
+                                                      ReturnPlaceEntity returnPlace) {
+        return RentalEntity.builder()
+                .customer(customer)
+                .car(car)
+                .pick_up_place(pickUp)
+                .return_place(returnPlace)
+                .date_of_rental(LocalDate.now())
+                .date_of_return(LocalDate.now().plusDays(3))
+                .total_cost(new BigDecimal("799.99"))
+                .status("CONFIRMED")
+                .build();
+    }
+
+
+    public static InsuranceEntity createTestInsuranceEntity(RentalEntity rental) {
+        InsuranceEntity insurance = new InsuranceEntity();
+        insurance.setRental(rental);
+        insurance.setInsurance_type("OC + AC");
+        insurance.setCost(new BigDecimal("399.99"));
+        insurance.setRange_of_insurance("Full coverage for damages, theft and glass");
+        return insurance;
+    }
+
+    public static InsuranceRequest createTestInsuranceRequest(UUID rentalId) {
+        return InsuranceRequest.builder()
+                .rentalId(rentalId)
+                .insurance_type("OC + AC")
+                .cost(123.45)
+                .range_of_insurance("Full coverage for damages, theft and glass")
+                .build();
+    }
+
+    public static RentalEntity createCompleteRentalEntity() {
+        return RentalEntity.builder()
+                .car(createTestCarEntity())
+                .customer(createTestCustomerEntity())
+                .pick_up_place(createTestPickUpPlaceEntity())
+                .return_place(createTestReturnPlaceEntity())
+                .total_cost(new BigDecimal("499.99"))
+                .date_of_rental(LocalDate.now())
+                .date_of_return(LocalDate.now().plusDays(7))
+                .status("ACTIVE")
+                .build();
+    }
+    public static ModelEntity createTestModelEntity(MakeEntity make, BodyTypeEntity bodyType) {
+        return ModelEntity.builder()
+                .name("Corolla")
+                .make(make)
+                .bodyType(bodyType)
+                .build();
+    }
+    public static CarEntity createTestCarEntity(ModelEntity model) {
+        return CarEntity.builder()
+                .model(model)
+                .specification(null)
+                .cost(BigDecimal.valueOf(200))
+                .deposit(BigDecimal.valueOf(100))
+                .availability("AVAILABLE")
+                .image_url("url")
+                .description("Test car")
+                .build();
+    }
+    public static PaymentTypeEntity createTestPaymentTypeEntity() {
+        return new PaymentTypeEntity();
+    }
+
+
 
     public static UserRequest createInvalidUserRequest() {
         UserRequest userRequest = new UserRequest();
